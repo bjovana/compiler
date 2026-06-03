@@ -1,0 +1,36 @@
+program A3
+
+int a,b,c;
+
+{
+    void main()
+    int niz[];
+    {
+        a = 5;
+        b = 3;
+		
+		niz = new int[9];
+		
+		niz[0] = 1;
+		niz[1] = 9;
+		niz[1]+++;
+		niz[2] = 2;
+		niz[3] = 3;
+		niz[4] = 4;
+		niz[5] = 5;
+		niz[6] = 6;
+		niz[7] = 7;
+		niz[8] = 8;
+		
+        c = (a * b + 10 / 2 - 1) % 7;
+
+        print(c); // 5
+        
+        a+++;
+        print(a); // 7
+    	print(niz[1]); // 11
+    	
+    	a = niz@5;
+    	print(a); // 8
+    }
+}

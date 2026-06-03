@@ -1,0 +1,866 @@
+INFO  19:57:04,853 - Compiling source file: program.mj
+INFO  19:57:04,855 - 
+
+
+====================================================================== Abstract Syntax Tree ======================================================================
+INFO  19:57:04,886 - #2 program
+INFO  19:57:04,887 - #53 A3
+INFO  19:57:04,887 - #5 int
+INFO  19:57:04,887 - #53 a
+INFO  19:57:04,887 - #50 ,
+INFO  19:57:04,888 - #53 b
+INFO  19:57:04,888 - #50 ,
+INFO  19:57:04,888 - #53 c
+INFO  19:57:04,888 - #49 ;
+INFO  19:57:04,888 - #45 {
+INFO  19:57:04,888 - #8 void
+INFO  19:57:04,889 - #3 main
+INFO  19:57:04,889 - #43 (
+INFO  19:57:04,889 - #44 )
+INFO  19:57:04,889 - #5 int
+INFO  19:57:04,890 - #53 niz
+INFO  19:57:04,890 - #47 [
+INFO  19:57:04,892 - #48 ]
+INFO  19:57:04,892 - #49 ;
+INFO  19:57:04,892 - #45 {
+INFO  19:57:04,894 - #53 a
+INFO  19:57:04,894 - #35 =
+INFO  19:57:04,894 - #54 5
+INFO  19:57:04,894 - #49 ;
+INFO  19:57:04,896 - #53 b
+INFO  19:57:04,896 - #35 =
+INFO  19:57:04,896 - #54 3
+INFO  19:57:04,896 - #49 ;
+INFO  19:57:04,896 - #53 niz
+INFO  19:57:04,896 - #35 =
+INFO  19:57:04,896 - #10 new
+INFO  19:57:04,896 - #5 int
+INFO  19:57:04,896 - #47 [
+INFO  19:57:04,896 - #54 9
+INFO  19:57:04,896 - #48 ]
+INFO  19:57:04,896 - #49 ;
+INFO  19:57:04,896 - #53 niz
+INFO  19:57:04,896 - #47 [
+INFO  19:57:04,896 - #54 0
+INFO  19:57:04,896 - #48 ]
+INFO  19:57:04,896 - #35 =
+INFO  19:57:04,896 - #54 1
+INFO  19:57:04,896 - #49 ;
+INFO  19:57:04,896 - #53 niz
+INFO  19:57:04,896 - #47 [
+INFO  19:57:04,896 - #54 1
+INFO  19:57:04,896 - #48 ]
+INFO  19:57:04,896 - #35 =
+INFO  19:57:04,896 - #54 9
+INFO  19:57:04,896 - #49 ;
+INFO  19:57:04,896 - #53 niz
+INFO  19:57:04,896 - #47 [
+INFO  19:57:04,896 - #54 1
+INFO  19:57:04,896 - #48 ]
+INFO  19:57:04,897 - #37 +++
+INFO  19:57:04,897 - #49 ;
+INFO  19:57:04,897 - #53 niz
+INFO  19:57:04,897 - #47 [
+INFO  19:57:04,897 - #54 2
+INFO  19:57:04,897 - #48 ]
+INFO  19:57:04,897 - #35 =
+INFO  19:57:04,897 - #54 2
+INFO  19:57:04,897 - #49 ;
+INFO  19:57:04,897 - #53 niz
+INFO  19:57:04,897 - #47 [
+INFO  19:57:04,897 - #54 3
+INFO  19:57:04,897 - #48 ]
+INFO  19:57:04,897 - #35 =
+INFO  19:57:04,897 - #54 3
+INFO  19:57:04,901 - #49 ;
+INFO  19:57:04,901 - #53 niz
+INFO  19:57:04,901 - #47 [
+INFO  19:57:04,901 - #54 4
+INFO  19:57:04,901 - #48 ]
+INFO  19:57:04,901 - #35 =
+INFO  19:57:04,901 - #54 4
+INFO  19:57:04,901 - #49 ;
+INFO  19:57:04,901 - #53 niz
+INFO  19:57:04,901 - #47 [
+INFO  19:57:04,901 - #54 5
+INFO  19:57:04,901 - #48 ]
+INFO  19:57:04,901 - #35 =
+INFO  19:57:04,901 - #54 5
+INFO  19:57:04,901 - #49 ;
+INFO  19:57:04,901 - #53 niz
+INFO  19:57:04,901 - #47 [
+INFO  19:57:04,901 - #54 6
+INFO  19:57:04,901 - #48 ]
+INFO  19:57:04,901 - #35 =
+INFO  19:57:04,902 - #54 6
+INFO  19:57:04,902 - #49 ;
+INFO  19:57:04,902 - #53 niz
+INFO  19:57:04,902 - #47 [
+INFO  19:57:04,902 - #54 7
+INFO  19:57:04,902 - #48 ]
+INFO  19:57:04,902 - #35 =
+INFO  19:57:04,902 - #54 7
+INFO  19:57:04,902 - #49 ;
+INFO  19:57:04,902 - #53 niz
+INFO  19:57:04,902 - #47 [
+INFO  19:57:04,902 - #54 8
+INFO  19:57:04,902 - #48 ]
+INFO  19:57:04,902 - #35 =
+INFO  19:57:04,902 - #54 8
+INFO  19:57:04,902 - #49 ;
+INFO  19:57:04,903 - #53 c
+INFO  19:57:04,903 - #35 =
+INFO  19:57:04,903 - #43 (
+INFO  19:57:04,903 - #53 a
+INFO  19:57:04,903 - #33 *
+INFO  19:57:04,903 - #53 b
+INFO  19:57:04,904 - #31 +
+INFO  19:57:04,904 - #54 10
+INFO  19:57:04,905 - #34 /
+INFO  19:57:04,905 - #54 2
+INFO  19:57:04,905 - #32 -
+INFO  19:57:04,905 - #54 1
+INFO  19:57:04,906 - #44 )
+INFO  19:57:04,906 - #36 %
+INFO  19:57:04,906 - #54 7
+INFO  19:57:04,906 - #49 ;
+INFO  19:57:04,906 - #12 print
+INFO  19:57:04,906 - #43 (
+INFO  19:57:04,906 - #53 c
+INFO  19:57:04,906 - #44 )
+INFO  19:57:04,906 - #49 ;
+INFO  19:57:04,907 - #53 a
+INFO  19:57:04,907 - #37 +++
+INFO  19:57:04,907 - #49 ;
+INFO  19:57:04,907 - #12 print
+INFO  19:57:04,907 - #43 (
+INFO  19:57:04,907 - #53 a
+INFO  19:57:04,907 - #44 )
+INFO  19:57:04,907 - #49 ;
+INFO  19:57:04,907 - #12 print
+INFO  19:57:04,907 - #43 (
+INFO  19:57:04,907 - #53 niz
+INFO  19:57:04,907 - #47 [
+INFO  19:57:04,907 - #54 1
+INFO  19:57:04,907 - #48 ]
+INFO  19:57:04,907 - #44 )
+INFO  19:57:04,907 - #49 ;
+INFO  19:57:04,907 - #53 a
+INFO  19:57:04,907 - #35 =
+INFO  19:57:04,907 - #53 niz
+INFO  19:57:04,907 - #38 @
+INFO  19:57:04,907 - #54 5
+INFO  19:57:04,907 - #49 ;
+INFO  19:57:04,907 - #12 print
+INFO  19:57:04,907 - #43 (
+INFO  19:57:04,907 - #53 a
+INFO  19:57:04,907 - #44 )
+INFO  19:57:04,907 - #49 ;
+INFO  19:57:04,907 - #46 }
+INFO  19:57:04,908 - #46 }
+INFO  19:57:04,911 - ProgramDecl(
+  ProgramNameDecl(
+   A3
+  ) [ProgramNameDecl]
+  GlobalObjectsVar(
+    GlobalObjectsEpsilon(
+    ) [GlobalObjectsEpsilon]
+    VarDecl(
+      VarTypeInt(
+      ) [VarTypeInt]
+      MultiVarIdDecl(
+       a
+        VarArrayDeclarationEpsilon(
+        ) [VarArrayDeclarationEpsilon]
+        MultiVarIdDecl(
+         b
+          VarArrayDeclarationEpsilon(
+          ) [VarArrayDeclarationEpsilon]
+          SingleVarIdDecl(
+           c
+            VarArrayDeclarationEpsilon(
+            ) [VarArrayDeclarationEpsilon]
+          ) [SingleVarIdDecl]
+        ) [MultiVarIdDecl]
+      ) [MultiVarIdDecl]
+    ) [VarDecl]
+  ) [GlobalObjectsVar]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+  MainFuncDecl(
+    VoidMain(
+    ) [VoidMain]
+    VarDeclarations(
+      VarDeclarationsEpsilon(
+      ) [VarDeclarationsEpsilon]
+      VarDecl(
+        VarTypeInt(
+        ) [VarTypeInt]
+        SingleVarIdDecl(
+         niz
+          VarArrayDeclaration(
+          ) [VarArrayDeclaration]
+        ) [SingleVarIdDecl]
+      ) [VarDecl]
+    ) [VarDeclarations]
+    StatementDeclarations(
+      StatementDeclDesignator(
+        DesignatorStatementDeclAssignment(
+          DesignatorDeclIdent(
+           a
+          ) [DesignatorDeclIdent]
+          ExprDeclaration(
+            ExprOptSignDeclEpsilon(
+            ) [ExprOptSignDeclEpsilon]
+            TermDecl(
+              FactorDeclNumber(
+               5
+              ) [FactorDeclNumber]
+              MulopFactorDeclarationsEpsilon(
+              ) [MulopFactorDeclarationsEpsilon]
+            ) [TermDecl]
+            AddopTermDeclarationsEpsilon(
+            ) [AddopTermDeclarationsEpsilon]
+          ) [ExprDeclaration]
+        ) [DesignatorStatementDeclAssignment]
+      ) [StatementDeclDesignator]
+      StatementDeclarations(
+        StatementDeclDesignator(
+          DesignatorStatementDeclAssignment(
+            DesignatorDeclIdent(
+             b
+            ) [DesignatorDeclIdent]
+            ExprDeclaration(
+              ExprOptSignDeclEpsilon(
+              ) [ExprOptSignDeclEpsilon]
+              TermDecl(
+                FactorDeclNumber(
+                 3
+                ) [FactorDeclNumber]
+                MulopFactorDeclarationsEpsilon(
+                ) [MulopFactorDeclarationsEpsilon]
+              ) [TermDecl]
+              AddopTermDeclarationsEpsilon(
+              ) [AddopTermDeclarationsEpsilon]
+            ) [ExprDeclaration]
+          ) [DesignatorStatementDeclAssignment]
+        ) [StatementDeclDesignator]
+        StatementDeclarations(
+          StatementDeclDesignator(
+            DesignatorStatementDeclAssignment(
+              DesignatorDeclIdent(
+               niz
+              ) [DesignatorDeclIdent]
+              ExprDeclaration(
+                ExprOptSignDeclEpsilon(
+                ) [ExprOptSignDeclEpsilon]
+                TermDecl(
+                  FactorDeclAllocationExpr(
+                    VarTypeInt(
+                    ) [VarTypeInt]
+                    ExprDeclaration(
+                      ExprOptSignDeclEpsilon(
+                      ) [ExprOptSignDeclEpsilon]
+                      TermDecl(
+                        FactorDeclNumber(
+                         9
+                        ) [FactorDeclNumber]
+                        MulopFactorDeclarationsEpsilon(
+                        ) [MulopFactorDeclarationsEpsilon]
+                      ) [TermDecl]
+                      AddopTermDeclarationsEpsilon(
+                      ) [AddopTermDeclarationsEpsilon]
+                    ) [ExprDeclaration]
+                  ) [FactorDeclAllocationExpr]
+                  MulopFactorDeclarationsEpsilon(
+                  ) [MulopFactorDeclarationsEpsilon]
+                ) [TermDecl]
+                AddopTermDeclarationsEpsilon(
+                ) [AddopTermDeclarationsEpsilon]
+              ) [ExprDeclaration]
+            ) [DesignatorStatementDeclAssignment]
+          ) [StatementDeclDesignator]
+          StatementDeclarations(
+            StatementDeclDesignator(
+              DesignatorStatementDeclAssignment(
+                DesignatorDeclIdentArrayElemAccess(
+                 niz
+                  ExprDeclaration(
+                    ExprOptSignDeclEpsilon(
+                    ) [ExprOptSignDeclEpsilon]
+                    TermDecl(
+                      FactorDeclNumber(
+                       0
+                      ) [FactorDeclNumber]
+                      MulopFactorDeclarationsEpsilon(
+                      ) [MulopFactorDeclarationsEpsilon]
+                    ) [TermDecl]
+                    AddopTermDeclarationsEpsilon(
+                    ) [AddopTermDeclarationsEpsilon]
+                  ) [ExprDeclaration]
+                ) [DesignatorDeclIdentArrayElemAccess]
+                ExprDeclaration(
+                  ExprOptSignDeclEpsilon(
+                  ) [ExprOptSignDeclEpsilon]
+                  TermDecl(
+                    FactorDeclNumber(
+                     1
+                    ) [FactorDeclNumber]
+                    MulopFactorDeclarationsEpsilon(
+                    ) [MulopFactorDeclarationsEpsilon]
+                  ) [TermDecl]
+                  AddopTermDeclarationsEpsilon(
+                  ) [AddopTermDeclarationsEpsilon]
+                ) [ExprDeclaration]
+              ) [DesignatorStatementDeclAssignment]
+            ) [StatementDeclDesignator]
+            StatementDeclarations(
+              StatementDeclDesignator(
+                DesignatorStatementDeclAssignment(
+                  DesignatorDeclIdentArrayElemAccess(
+                   niz
+                    ExprDeclaration(
+                      ExprOptSignDeclEpsilon(
+                      ) [ExprOptSignDeclEpsilon]
+                      TermDecl(
+                        FactorDeclNumber(
+                         1
+                        ) [FactorDeclNumber]
+                        MulopFactorDeclarationsEpsilon(
+                        ) [MulopFactorDeclarationsEpsilon]
+                      ) [TermDecl]
+                      AddopTermDeclarationsEpsilon(
+                      ) [AddopTermDeclarationsEpsilon]
+                    ) [ExprDeclaration]
+                  ) [DesignatorDeclIdentArrayElemAccess]
+                  ExprDeclaration(
+                    ExprOptSignDeclEpsilon(
+                    ) [ExprOptSignDeclEpsilon]
+                    TermDecl(
+                      FactorDeclNumber(
+                       9
+                      ) [FactorDeclNumber]
+                      MulopFactorDeclarationsEpsilon(
+                      ) [MulopFactorDeclarationsEpsilon]
+                    ) [TermDecl]
+                    AddopTermDeclarationsEpsilon(
+                    ) [AddopTermDeclarationsEpsilon]
+                  ) [ExprDeclaration]
+                ) [DesignatorStatementDeclAssignment]
+              ) [StatementDeclDesignator]
+              StatementDeclarations(
+                StatementDeclDesignator(
+                  DesignatorStatementDeclDoubleIncrement(
+                    DesignatorDeclIdentArrayElemAccess(
+                     niz
+                      ExprDeclaration(
+                        ExprOptSignDeclEpsilon(
+                        ) [ExprOptSignDeclEpsilon]
+                        TermDecl(
+                          FactorDeclNumber(
+                           1
+                          ) [FactorDeclNumber]
+                          MulopFactorDeclarationsEpsilon(
+                          ) [MulopFactorDeclarationsEpsilon]
+                        ) [TermDecl]
+                        AddopTermDeclarationsEpsilon(
+                        ) [AddopTermDeclarationsEpsilon]
+                      ) [ExprDeclaration]
+                    ) [DesignatorDeclIdentArrayElemAccess]
+                  ) [DesignatorStatementDeclDoubleIncrement]
+                ) [StatementDeclDesignator]
+                StatementDeclarations(
+                  StatementDeclDesignator(
+                    DesignatorStatementDeclAssignment(
+                      DesignatorDeclIdentArrayElemAccess(
+                       niz
+                        ExprDeclaration(
+                          ExprOptSignDeclEpsilon(
+                          ) [ExprOptSignDeclEpsilon]
+                          TermDecl(
+                            FactorDeclNumber(
+                             2
+                            ) [FactorDeclNumber]
+                            MulopFactorDeclarationsEpsilon(
+                            ) [MulopFactorDeclarationsEpsilon]
+                          ) [TermDecl]
+                          AddopTermDeclarationsEpsilon(
+                          ) [AddopTermDeclarationsEpsilon]
+                        ) [ExprDeclaration]
+                      ) [DesignatorDeclIdentArrayElemAccess]
+                      ExprDeclaration(
+                        ExprOptSignDeclEpsilon(
+                        ) [ExprOptSignDeclEpsilon]
+                        TermDecl(
+                          FactorDeclNumber(
+                           2
+                          ) [FactorDeclNumber]
+                          MulopFactorDeclarationsEpsilon(
+                          ) [MulopFactorDeclarationsEpsilon]
+                        ) [TermDecl]
+                        AddopTermDeclarationsEpsilon(
+                        ) [AddopTermDeclarationsEpsilon]
+                      ) [ExprDeclaration]
+                    ) [DesignatorStatementDeclAssignment]
+                  ) [StatementDeclDesignator]
+                  StatementDeclarations(
+                    StatementDeclDesignator(
+                      DesignatorStatementDeclAssignment(
+                        DesignatorDeclIdentArrayElemAccess(
+                         niz
+                          ExprDeclaration(
+                            ExprOptSignDeclEpsilon(
+                            ) [ExprOptSignDeclEpsilon]
+                            TermDecl(
+                              FactorDeclNumber(
+                               3
+                              ) [FactorDeclNumber]
+                              MulopFactorDeclarationsEpsilon(
+                              ) [MulopFactorDeclarationsEpsilon]
+                            ) [TermDecl]
+                            AddopTermDeclarationsEpsilon(
+                            ) [AddopTermDeclarationsEpsilon]
+                          ) [ExprDeclaration]
+                        ) [DesignatorDeclIdentArrayElemAccess]
+                        ExprDeclaration(
+                          ExprOptSignDeclEpsilon(
+                          ) [ExprOptSignDeclEpsilon]
+                          TermDecl(
+                            FactorDeclNumber(
+                             3
+                            ) [FactorDeclNumber]
+                            MulopFactorDeclarationsEpsilon(
+                            ) [MulopFactorDeclarationsEpsilon]
+                          ) [TermDecl]
+                          AddopTermDeclarationsEpsilon(
+                          ) [AddopTermDeclarationsEpsilon]
+                        ) [ExprDeclaration]
+                      ) [DesignatorStatementDeclAssignment]
+                    ) [StatementDeclDesignator]
+                    StatementDeclarations(
+                      StatementDeclDesignator(
+                        DesignatorStatementDeclAssignment(
+                          DesignatorDeclIdentArrayElemAccess(
+                           niz
+                            ExprDeclaration(
+                              ExprOptSignDeclEpsilon(
+                              ) [ExprOptSignDeclEpsilon]
+                              TermDecl(
+                                FactorDeclNumber(
+                                 4
+                                ) [FactorDeclNumber]
+                                MulopFactorDeclarationsEpsilon(
+                                ) [MulopFactorDeclarationsEpsilon]
+                              ) [TermDecl]
+                              AddopTermDeclarationsEpsilon(
+                              ) [AddopTermDeclarationsEpsilon]
+                            ) [ExprDeclaration]
+                          ) [DesignatorDeclIdentArrayElemAccess]
+                          ExprDeclaration(
+                            ExprOptSignDeclEpsilon(
+                            ) [ExprOptSignDeclEpsilon]
+                            TermDecl(
+                              FactorDeclNumber(
+                               4
+                              ) [FactorDeclNumber]
+                              MulopFactorDeclarationsEpsilon(
+                              ) [MulopFactorDeclarationsEpsilon]
+                            ) [TermDecl]
+                            AddopTermDeclarationsEpsilon(
+                            ) [AddopTermDeclarationsEpsilon]
+                          ) [ExprDeclaration]
+                        ) [DesignatorStatementDeclAssignment]
+                      ) [StatementDeclDesignator]
+                      StatementDeclarations(
+                        StatementDeclDesignator(
+                          DesignatorStatementDeclAssignment(
+                            DesignatorDeclIdentArrayElemAccess(
+                             niz
+                              ExprDeclaration(
+                                ExprOptSignDeclEpsilon(
+                                ) [ExprOptSignDeclEpsilon]
+                                TermDecl(
+                                  FactorDeclNumber(
+                                   5
+                                  ) [FactorDeclNumber]
+                                  MulopFactorDeclarationsEpsilon(
+                                  ) [MulopFactorDeclarationsEpsilon]
+                                ) [TermDecl]
+                                AddopTermDeclarationsEpsilon(
+                                ) [AddopTermDeclarationsEpsilon]
+                              ) [ExprDeclaration]
+                            ) [DesignatorDeclIdentArrayElemAccess]
+                            ExprDeclaration(
+                              ExprOptSignDeclEpsilon(
+                              ) [ExprOptSignDeclEpsilon]
+                              TermDecl(
+                                FactorDeclNumber(
+                                 5
+                                ) [FactorDeclNumber]
+                                MulopFactorDeclarationsEpsilon(
+                                ) [MulopFactorDeclarationsEpsilon]
+                              ) [TermDecl]
+                              AddopTermDeclarationsEpsilon(
+                              ) [AddopTermDeclarationsEpsilon]
+                            ) [ExprDeclaration]
+                          ) [DesignatorStatementDeclAssignment]
+                        ) [StatementDeclDesignator]
+                        StatementDeclarations(
+                          StatementDeclDesignator(
+                            DesignatorStatementDeclAssignment(
+                              DesignatorDeclIdentArrayElemAccess(
+                               niz
+                                ExprDeclaration(
+                                  ExprOptSignDeclEpsilon(
+                                  ) [ExprOptSignDeclEpsilon]
+                                  TermDecl(
+                                    FactorDeclNumber(
+                                     6
+                                    ) [FactorDeclNumber]
+                                    MulopFactorDeclarationsEpsilon(
+                                    ) [MulopFactorDeclarationsEpsilon]
+                                  ) [TermDecl]
+                                  AddopTermDeclarationsEpsilon(
+                                  ) [AddopTermDeclarationsEpsilon]
+                                ) [ExprDeclaration]
+                              ) [DesignatorDeclIdentArrayElemAccess]
+                              ExprDeclaration(
+                                ExprOptSignDeclEpsilon(
+                                ) [ExprOptSignDeclEpsilon]
+                                TermDecl(
+                                  FactorDeclNumber(
+                                   6
+                                  ) [FactorDeclNumber]
+                                  MulopFactorDeclarationsEpsilon(
+                                  ) [MulopFactorDeclarationsEpsilon]
+                                ) [TermDecl]
+                                AddopTermDeclarationsEpsilon(
+                                ) [AddopTermDeclarationsEpsilon]
+                              ) [ExprDeclaration]
+                            ) [DesignatorStatementDeclAssignment]
+                          ) [StatementDeclDesignator]
+                          StatementDeclarations(
+                            StatementDeclDesignator(
+                              DesignatorStatementDeclAssignment(
+                                DesignatorDeclIdentArrayElemAccess(
+                                 niz
+                                  ExprDeclaration(
+                                    ExprOptSignDeclEpsilon(
+                                    ) [ExprOptSignDeclEpsilon]
+                                    TermDecl(
+                                      FactorDeclNumber(
+                                       7
+                                      ) [FactorDeclNumber]
+                                      MulopFactorDeclarationsEpsilon(
+                                      ) [MulopFactorDeclarationsEpsilon]
+                                    ) [TermDecl]
+                                    AddopTermDeclarationsEpsilon(
+                                    ) [AddopTermDeclarationsEpsilon]
+                                  ) [ExprDeclaration]
+                                ) [DesignatorDeclIdentArrayElemAccess]
+                                ExprDeclaration(
+                                  ExprOptSignDeclEpsilon(
+                                  ) [ExprOptSignDeclEpsilon]
+                                  TermDecl(
+                                    FactorDeclNumber(
+                                     7
+                                    ) [FactorDeclNumber]
+                                    MulopFactorDeclarationsEpsilon(
+                                    ) [MulopFactorDeclarationsEpsilon]
+                                  ) [TermDecl]
+                                  AddopTermDeclarationsEpsilon(
+                                  ) [AddopTermDeclarationsEpsilon]
+                                ) [ExprDeclaration]
+                              ) [DesignatorStatementDeclAssignment]
+                            ) [StatementDeclDesignator]
+                            StatementDeclarations(
+                              StatementDeclDesignator(
+                                DesignatorStatementDeclAssignment(
+                                  DesignatorDeclIdentArrayElemAccess(
+                                   niz
+                                    ExprDeclaration(
+                                      ExprOptSignDeclEpsilon(
+                                      ) [ExprOptSignDeclEpsilon]
+                                      TermDecl(
+                                        FactorDeclNumber(
+                                         8
+                                        ) [FactorDeclNumber]
+                                        MulopFactorDeclarationsEpsilon(
+                                        ) [MulopFactorDeclarationsEpsilon]
+                                      ) [TermDecl]
+                                      AddopTermDeclarationsEpsilon(
+                                      ) [AddopTermDeclarationsEpsilon]
+                                    ) [ExprDeclaration]
+                                  ) [DesignatorDeclIdentArrayElemAccess]
+                                  ExprDeclaration(
+                                    ExprOptSignDeclEpsilon(
+                                    ) [ExprOptSignDeclEpsilon]
+                                    TermDecl(
+                                      FactorDeclNumber(
+                                       8
+                                      ) [FactorDeclNumber]
+                                      MulopFactorDeclarationsEpsilon(
+                                      ) [MulopFactorDeclarationsEpsilon]
+                                    ) [TermDecl]
+                                    AddopTermDeclarationsEpsilon(
+                                    ) [AddopTermDeclarationsEpsilon]
+                                  ) [ExprDeclaration]
+                                ) [DesignatorStatementDeclAssignment]
+                              ) [StatementDeclDesignator]
+                              StatementDeclarations(
+                                StatementDeclDesignator(
+                                  DesignatorStatementDeclAssignment(
+                                    DesignatorDeclIdent(
+                                     c
+                                    ) [DesignatorDeclIdent]
+                                    ExprDeclaration(
+                                      ExprOptSignDeclEpsilon(
+                                      ) [ExprOptSignDeclEpsilon]
+                                      TermDecl(
+                                        FactorDeclParenExpr(
+                                          ExprDeclaration(
+                                            ExprOptSignDeclEpsilon(
+                                            ) [ExprOptSignDeclEpsilon]
+                                            TermDecl(
+                                              FactorDeclDesignator(
+                                                DesignatorDeclIdent(
+                                                 a
+                                                ) [DesignatorDeclIdent]
+                                              ) [FactorDeclDesignator]
+                                              MulopFactorDeclarations(
+                                                MulopFactorDeclarationsEpsilon(
+                                                ) [MulopFactorDeclarationsEpsilon]
+                                                MulopDeclMul(
+                                                ) [MulopDeclMul]
+                                                FactorDeclDesignator(
+                                                  DesignatorDeclIdent(
+                                                   b
+                                                  ) [DesignatorDeclIdent]
+                                                ) [FactorDeclDesignator]
+                                              ) [MulopFactorDeclarations]
+                                            ) [TermDecl]
+                                            AddopTermDeclarations(
+                                              AddopTermDeclarations(
+                                                AddopTermDeclarationsEpsilon(
+                                                ) [AddopTermDeclarationsEpsilon]
+                                                AddopDeclPlus(
+                                                ) [AddopDeclPlus]
+                                                TermDecl(
+                                                  FactorDeclNumber(
+                                                   10
+                                                  ) [FactorDeclNumber]
+                                                  MulopFactorDeclarations(
+                                                    MulopFactorDeclarationsEpsilon(
+                                                    ) [MulopFactorDeclarationsEpsilon]
+                                                    MulopDeclDiv(
+                                                    ) [MulopDeclDiv]
+                                                    FactorDeclNumber(
+                                                     2
+                                                    ) [FactorDeclNumber]
+                                                  ) [MulopFactorDeclarations]
+                                                ) [TermDecl]
+                                              ) [AddopTermDeclarations]
+                                              AddopDeclMinus(
+                                              ) [AddopDeclMinus]
+                                              TermDecl(
+                                                FactorDeclNumber(
+                                                 1
+                                                ) [FactorDeclNumber]
+                                                MulopFactorDeclarationsEpsilon(
+                                                ) [MulopFactorDeclarationsEpsilon]
+                                              ) [TermDecl]
+                                            ) [AddopTermDeclarations]
+                                          ) [ExprDeclaration]
+                                        ) [FactorDeclParenExpr]
+                                        MulopFactorDeclarations(
+                                          MulopFactorDeclarationsEpsilon(
+                                          ) [MulopFactorDeclarationsEpsilon]
+                                          MulopDeclMod(
+                                          ) [MulopDeclMod]
+                                          FactorDeclNumber(
+                                           7
+                                          ) [FactorDeclNumber]
+                                        ) [MulopFactorDeclarations]
+                                      ) [TermDecl]
+                                      AddopTermDeclarationsEpsilon(
+                                      ) [AddopTermDeclarationsEpsilon]
+                                    ) [ExprDeclaration]
+                                  ) [DesignatorStatementDeclAssignment]
+                                ) [StatementDeclDesignator]
+                                StatementDeclarations(
+                                  StatementDeclPrint(
+                                    ExprDeclaration(
+                                      ExprOptSignDeclEpsilon(
+                                      ) [ExprOptSignDeclEpsilon]
+                                      TermDecl(
+                                        FactorDeclDesignator(
+                                          DesignatorDeclIdent(
+                                           c
+                                          ) [DesignatorDeclIdent]
+                                        ) [FactorDeclDesignator]
+                                        MulopFactorDeclarationsEpsilon(
+                                        ) [MulopFactorDeclarationsEpsilon]
+                                      ) [TermDecl]
+                                      AddopTermDeclarationsEpsilon(
+                                      ) [AddopTermDeclarationsEpsilon]
+                                    ) [ExprDeclaration]
+                                    PrintArgsDeclarationEpsilon(
+                                    ) [PrintArgsDeclarationEpsilon]
+                                  ) [StatementDeclPrint]
+                                  StatementDeclarations(
+                                    StatementDeclDesignator(
+                                      DesignatorStatementDeclDoubleIncrement(
+                                        DesignatorDeclIdent(
+                                         a
+                                        ) [DesignatorDeclIdent]
+                                      ) [DesignatorStatementDeclDoubleIncrement]
+                                    ) [StatementDeclDesignator]
+                                    StatementDeclarations(
+                                      StatementDeclPrint(
+                                        ExprDeclaration(
+                                          ExprOptSignDeclEpsilon(
+                                          ) [ExprOptSignDeclEpsilon]
+                                          TermDecl(
+                                            FactorDeclDesignator(
+                                              DesignatorDeclIdent(
+                                               a
+                                              ) [DesignatorDeclIdent]
+                                            ) [FactorDeclDesignator]
+                                            MulopFactorDeclarationsEpsilon(
+                                            ) [MulopFactorDeclarationsEpsilon]
+                                          ) [TermDecl]
+                                          AddopTermDeclarationsEpsilon(
+                                          ) [AddopTermDeclarationsEpsilon]
+                                        ) [ExprDeclaration]
+                                        PrintArgsDeclarationEpsilon(
+                                        ) [PrintArgsDeclarationEpsilon]
+                                      ) [StatementDeclPrint]
+                                      StatementDeclarations(
+                                        StatementDeclPrint(
+                                          ExprDeclaration(
+                                            ExprOptSignDeclEpsilon(
+                                            ) [ExprOptSignDeclEpsilon]
+                                            TermDecl(
+                                              FactorDeclDesignator(
+                                                DesignatorDeclIdentArrayElemAccess(
+                                                 niz
+                                                  ExprDeclaration(
+                                                    ExprOptSignDeclEpsilon(
+                                                    ) [ExprOptSignDeclEpsilon]
+                                                    TermDecl(
+                                                      FactorDeclNumber(
+                                                       1
+                                                      ) [FactorDeclNumber]
+                                                      MulopFactorDeclarationsEpsilon(
+                                                      ) [MulopFactorDeclarationsEpsilon]
+                                                    ) [TermDecl]
+                                                    AddopTermDeclarationsEpsilon(
+                                                    ) [AddopTermDeclarationsEpsilon]
+                                                  ) [ExprDeclaration]
+                                                ) [DesignatorDeclIdentArrayElemAccess]
+                                              ) [FactorDeclDesignator]
+                                              MulopFactorDeclarationsEpsilon(
+                                              ) [MulopFactorDeclarationsEpsilon]
+                                            ) [TermDecl]
+                                            AddopTermDeclarationsEpsilon(
+                                            ) [AddopTermDeclarationsEpsilon]
+                                          ) [ExprDeclaration]
+                                          PrintArgsDeclarationEpsilon(
+                                          ) [PrintArgsDeclarationEpsilon]
+                                        ) [StatementDeclPrint]
+                                        StatementDeclarations(
+                                          StatementDeclDesignator(
+                                            DesignatorStatementDeclAssignment(
+                                              DesignatorDeclIdent(
+                                               a
+                                              ) [DesignatorDeclIdent]
+                                              ExprDeclaration(
+                                                ExprOptSignDeclEpsilon(
+                                                ) [ExprOptSignDeclEpsilon]
+                                                TermDecl(
+                                                  FactorDeclDesignator(
+                                                    DesignatorDeclDot(
+                                                     niz
+                                                     5
+                                                    ) [DesignatorDeclDot]
+                                                  ) [FactorDeclDesignator]
+                                                  MulopFactorDeclarationsEpsilon(
+                                                  ) [MulopFactorDeclarationsEpsilon]
+                                                ) [TermDecl]
+                                                AddopTermDeclarationsEpsilon(
+                                                ) [AddopTermDeclarationsEpsilon]
+                                              ) [ExprDeclaration]
+                                            ) [DesignatorStatementDeclAssignment]
+                                          ) [StatementDeclDesignator]
+                                          StatementDeclarations(
+                                            StatementDeclPrint(
+                                              ExprDeclaration(
+                                                ExprOptSignDeclEpsilon(
+                                                ) [ExprOptSignDeclEpsilon]
+                                                TermDecl(
+                                                  FactorDeclDesignator(
+                                                    DesignatorDeclIdent(
+                                                     a
+                                                    ) [DesignatorDeclIdent]
+                                                  ) [FactorDeclDesignator]
+                                                  MulopFactorDeclarationsEpsilon(
+                                                  ) [MulopFactorDeclarationsEpsilon]
+                                                ) [TermDecl]
+                                                AddopTermDeclarationsEpsilon(
+                                                ) [AddopTermDeclarationsEpsilon]
+                                              ) [ExprDeclaration]
+                                              PrintArgsDeclarationEpsilon(
+                                              ) [PrintArgsDeclarationEpsilon]
+                                            ) [StatementDeclPrint]
+                                            StatementDeclarationsEpsilon(
+                                            ) [StatementDeclarationsEpsilon]
+                                          ) [StatementDeclarations]
+                                        ) [StatementDeclarations]
+                                      ) [StatementDeclarations]
+                                    ) [StatementDeclarations]
+                                  ) [StatementDeclarations]
+                                ) [StatementDeclarations]
+                              ) [StatementDeclarations]
+                            ) [StatementDeclarations]
+                          ) [StatementDeclarations]
+                        ) [StatementDeclarations]
+                      ) [StatementDeclarations]
+                    ) [StatementDeclarations]
+                  ) [StatementDeclarations]
+                ) [StatementDeclarations]
+              ) [StatementDeclarations]
+            ) [StatementDeclarations]
+          ) [StatementDeclarations]
+        ) [StatementDeclarations]
+      ) [StatementDeclarations]
+    ) [StatementDeclarations]
+  ) [MainFuncDecl]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+) [ProgramDecl]
+INFO  19:57:04,912 - ===============================================================================================================================================================================
+
+
+
+INFO  19:57:04,912 - ====================================================================== Semantic Analysis ======================================================================
+
+
+INFO  19:57:04,922 - Initialized a Symbol Table.
+INFO  19:57:04,924 - Opened the [A3] scope.
+INFO  19:57:04,925 - Variable with name [c] has been added to the symbol table.
+INFO  19:57:04,925 - Variable with name [b] has been added to the symbol table.
+INFO  19:57:04,925 - Variable with name [a] has been added to the symbol table.
+INFO  19:57:04,925 - Opened the [main] scope.
+INFO  19:57:04,925 - Variable with name [niz] has been added to the symbol table.
+INFO  19:57:04,925 - [main] scope level: 0
+INFO  19:57:04,925 - Closed [main] scope.
+INFO  19:57:04,925 - Closed [A3] scope.
+INFO  19:57:04,925 - ===============================================================================================================================================================================
+
+
+INFO  19:57:04,925 - ====================================================================== Code generation ======================================================================
+
+INFO  19:57:04,934 - ===============================================================================================================================================================================
+
+
+

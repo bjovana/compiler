@@ -1,0 +1,19 @@
+package rs.ac.bg.etf.pp1.utils;
+
+public class ConstantUtils {
+	
+	public static final String MAIN_SCOPE_NAME = "main";
+	
+	public static final String PARAM_INSERTION = "paramInsertion";
+	public static final String VARIABLE_INSERTION = "objectInsertion";
+	
+	public static final String LENGTH = "lenght";
+	public static final String ARRAY_ELEM = "arrayElem";
+	
+	public static final int PRINT_CHAR_WIDTH = 1;
+	public static final int PRINT_INT_WIDTH = 5;
+	
+	private ConstantUtils() {
+		// Private constructor for preventing utils class instantiation
+	}
+}

@@ -1,0 +1,111 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class MethodParamsDecl extends ParamsDecl {
+
+    private ParamsDecl ParamsDecl;
+    private VarType VarType;
+    private String paramName;
+    private VarArrayDecl VarArrayDecl;
+
+    public MethodParamsDecl (ParamsDecl ParamsDecl, VarType VarType, String paramName, VarArrayDecl VarArrayDecl) {
+        this.ParamsDecl=ParamsDecl;
+        if(ParamsDecl!=null) ParamsDecl.setParent(this);
+        this.VarType=VarType;
+        if(VarType!=null) VarType.setParent(this);
+        this.paramName=paramName;
+        this.VarArrayDecl=VarArrayDecl;
+        if(VarArrayDecl!=null) VarArrayDecl.setParent(this);
+    }
+
+    public ParamsDecl getParamsDecl() {
+        return ParamsDecl;
+    }
+
+    public void setParamsDecl(ParamsDecl ParamsDecl) {
+        this.ParamsDecl=ParamsDecl;
+    }
+
+    public VarType getVarType() {
+        return VarType;
+    }
+
+    public void setVarType(VarType VarType) {
+        this.VarType=VarType;
+    }
+
+    public String getParamName() {
+        return paramName;
+    }
+
+    public void setParamName(String paramName) {
+        this.paramName=paramName;
+    }
+
+    public VarArrayDecl getVarArrayDecl() {
+        return VarArrayDecl;
+    }
+
+    public void setVarArrayDecl(VarArrayDecl VarArrayDecl) {
+        this.VarArrayDecl=VarArrayDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(ParamsDecl!=null) ParamsDecl.accept(visitor);
+        if(VarType!=null) VarType.accept(visitor);
+        if(VarArrayDecl!=null) VarArrayDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(ParamsDecl!=null) ParamsDecl.traverseTopDown(visitor);
+        if(VarType!=null) VarType.traverseTopDown(visitor);
+        if(VarArrayDecl!=null) VarArrayDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(ParamsDecl!=null) ParamsDecl.traverseBottomUp(visitor);
+        if(VarType!=null) VarType.traverseBottomUp(visitor);
+        if(VarArrayDecl!=null) VarArrayDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("MethodParamsDecl(\n");
+
+        if(ParamsDecl!=null)
+            buffer.append(ParamsDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(VarType!=null)
+            buffer.append(VarType.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(" "+tab+paramName);
+        buffer.append("\n");
+
+        if(VarArrayDecl!=null)
+            buffer.append(VarArrayDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [MethodParamsDecl]");
+        return buffer.toString();
+    }
+}

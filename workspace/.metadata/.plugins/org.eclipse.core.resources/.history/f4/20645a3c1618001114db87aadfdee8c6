@@ -1,0 +1,47 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import rs.ac.bg.etf.pp1.CounterVisitor.*;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.*;
+
+public class CodeGeneratorUtils {
+	
+	/**
+	 * Loads the local variables and formal parameters. Enters the method code.
+	 * 
+	 * @param methodNode Method for execution
+	 */
+	public static void enterMethod(SyntaxNode methodNode, String methodName) {
+		
+		VarCounter varCounter = new VarCounter();
+		methodNode.traverseTopDown(varCounter);
+		
+		MethodParamCounter fpCounter = new MethodParamCounter();
+		methodNode.traverseTopDown(fpCounter);
+		
+		// Generate the entry
+		Code.put(Code.enter);
+		Code.put(fpCounter.getCount());
+		Code.put(fpCounter.getCount() + varCounter.getCount());
+	}
+	
+	/**
+	 * Exit the method code and returns to the main flow.
+	 */
+	public static void exitMethod() {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	/**
+	 * Swaps 2 last element on stack.
+	 */
+	public static void swap() {
+	    Code.put(Code.dup_x1);
+	    Code.put(Code.pop);
+	}
+	
+	private CodeGeneratorUtils() {
+		// Prevents utils class instantiation
+	}
+}

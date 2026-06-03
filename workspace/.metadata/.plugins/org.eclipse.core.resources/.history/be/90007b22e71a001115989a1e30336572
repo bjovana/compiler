@@ -1,0 +1,131 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class ConstDecl implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+
+    private ConstType ConstType;
+    private String constName;
+    private ConstVal ConstVal;
+    private ConstDeclMul ConstDeclMul;
+
+    public ConstDecl (ConstType ConstType, String constName, ConstVal ConstVal, ConstDeclMul ConstDeclMul) {
+        this.ConstType=ConstType;
+        if(ConstType!=null) ConstType.setParent(this);
+        this.constName=constName;
+        this.ConstVal=ConstVal;
+        if(ConstVal!=null) ConstVal.setParent(this);
+        this.ConstDeclMul=ConstDeclMul;
+        if(ConstDeclMul!=null) ConstDeclMul.setParent(this);
+    }
+
+    public ConstType getConstType() {
+        return ConstType;
+    }
+
+    public void setConstType(ConstType ConstType) {
+        this.ConstType=ConstType;
+    }
+
+    public String getConstName() {
+        return constName;
+    }
+
+    public void setConstName(String constName) {
+        this.constName=constName;
+    }
+
+    public ConstVal getConstVal() {
+        return ConstVal;
+    }
+
+    public void setConstVal(ConstVal ConstVal) {
+        this.ConstVal=ConstVal;
+    }
+
+    public ConstDeclMul getConstDeclMul() {
+        return ConstDeclMul;
+    }
+
+    public void setConstDeclMul(ConstDeclMul ConstDeclMul) {
+        this.ConstDeclMul=ConstDeclMul;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(ConstType!=null) ConstType.accept(visitor);
+        if(ConstVal!=null) ConstVal.accept(visitor);
+        if(ConstDeclMul!=null) ConstDeclMul.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(ConstType!=null) ConstType.traverseTopDown(visitor);
+        if(ConstVal!=null) ConstVal.traverseTopDown(visitor);
+        if(ConstDeclMul!=null) ConstDeclMul.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(ConstType!=null) ConstType.traverseBottomUp(visitor);
+        if(ConstVal!=null) ConstVal.traverseBottomUp(visitor);
+        if(ConstDeclMul!=null) ConstDeclMul.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("ConstDecl(\n");
+
+        if(ConstType!=null)
+            buffer.append(ConstType.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(" "+tab+constName);
+        buffer.append("\n");
+
+        if(ConstVal!=null)
+            buffer.append(ConstVal.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ConstDeclMul!=null)
+            buffer.append(ConstDeclMul.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [ConstDecl]");
+        return buffer.toString();
+    }
+}

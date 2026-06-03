@@ -1,0 +1,98 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class AddopTermDeclarations extends AddopTermDeclList {
+
+    private AddopTermDeclList AddopTermDeclList;
+    private AddopDecl AddopDecl;
+    private TermDecl TermDecl;
+
+    public AddopTermDeclarations (AddopTermDeclList AddopTermDeclList, AddopDecl AddopDecl, TermDecl TermDecl) {
+        this.AddopTermDeclList=AddopTermDeclList;
+        if(AddopTermDeclList!=null) AddopTermDeclList.setParent(this);
+        this.AddopDecl=AddopDecl;
+        if(AddopDecl!=null) AddopDecl.setParent(this);
+        this.TermDecl=TermDecl;
+        if(TermDecl!=null) TermDecl.setParent(this);
+    }
+
+    public AddopTermDeclList getAddopTermDeclList() {
+        return AddopTermDeclList;
+    }
+
+    public void setAddopTermDeclList(AddopTermDeclList AddopTermDeclList) {
+        this.AddopTermDeclList=AddopTermDeclList;
+    }
+
+    public AddopDecl getAddopDecl() {
+        return AddopDecl;
+    }
+
+    public void setAddopDecl(AddopDecl AddopDecl) {
+        this.AddopDecl=AddopDecl;
+    }
+
+    public TermDecl getTermDecl() {
+        return TermDecl;
+    }
+
+    public void setTermDecl(TermDecl TermDecl) {
+        this.TermDecl=TermDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(AddopTermDeclList!=null) AddopTermDeclList.accept(visitor);
+        if(AddopDecl!=null) AddopDecl.accept(visitor);
+        if(TermDecl!=null) TermDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(AddopTermDeclList!=null) AddopTermDeclList.traverseTopDown(visitor);
+        if(AddopDecl!=null) AddopDecl.traverseTopDown(visitor);
+        if(TermDecl!=null) TermDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(AddopTermDeclList!=null) AddopTermDeclList.traverseBottomUp(visitor);
+        if(AddopDecl!=null) AddopDecl.traverseBottomUp(visitor);
+        if(TermDecl!=null) TermDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("AddopTermDeclarations(\n");
+
+        if(AddopTermDeclList!=null)
+            buffer.append(AddopTermDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(AddopDecl!=null)
+            buffer.append(AddopDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(TermDecl!=null)
+            buffer.append(TermDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [AddopTermDeclarations]");
+        return buffer.toString();
+    }
+}

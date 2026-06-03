@@ -1,0 +1,98 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class CondTermAndPartDeclaration extends CondTermAndPartDecl {
+
+    private CondTermAndPartDecl CondTermAndPartDecl;
+    private And And;
+    private CondFactDecl CondFactDecl;
+
+    public CondTermAndPartDeclaration (CondTermAndPartDecl CondTermAndPartDecl, And And, CondFactDecl CondFactDecl) {
+        this.CondTermAndPartDecl=CondTermAndPartDecl;
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.setParent(this);
+        this.And=And;
+        if(And!=null) And.setParent(this);
+        this.CondFactDecl=CondFactDecl;
+        if(CondFactDecl!=null) CondFactDecl.setParent(this);
+    }
+
+    public CondTermAndPartDecl getCondTermAndPartDecl() {
+        return CondTermAndPartDecl;
+    }
+
+    public void setCondTermAndPartDecl(CondTermAndPartDecl CondTermAndPartDecl) {
+        this.CondTermAndPartDecl=CondTermAndPartDecl;
+    }
+
+    public And getAnd() {
+        return And;
+    }
+
+    public void setAnd(And And) {
+        this.And=And;
+    }
+
+    public CondFactDecl getCondFactDecl() {
+        return CondFactDecl;
+    }
+
+    public void setCondFactDecl(CondFactDecl CondFactDecl) {
+        this.CondFactDecl=CondFactDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.accept(visitor);
+        if(And!=null) And.accept(visitor);
+        if(CondFactDecl!=null) CondFactDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.traverseTopDown(visitor);
+        if(And!=null) And.traverseTopDown(visitor);
+        if(CondFactDecl!=null) CondFactDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.traverseBottomUp(visitor);
+        if(And!=null) And.traverseBottomUp(visitor);
+        if(CondFactDecl!=null) CondFactDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("CondTermAndPartDeclaration(\n");
+
+        if(CondTermAndPartDecl!=null)
+            buffer.append(CondTermAndPartDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(And!=null)
+            buffer.append(And.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(CondFactDecl!=null)
+            buffer.append(CondFactDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [CondTermAndPartDeclaration]");
+        return buffer.toString();
+    }
+}

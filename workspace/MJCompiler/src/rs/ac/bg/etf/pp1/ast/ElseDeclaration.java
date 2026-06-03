@@ -1,0 +1,58 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class ElseDeclaration extends ElseDecl {
+
+    private CondStatementDecl CondStatementDecl;
+
+    public ElseDeclaration (CondStatementDecl CondStatementDecl) {
+        this.CondStatementDecl=CondStatementDecl;
+        if(CondStatementDecl!=null) CondStatementDecl.setParent(this);
+    }
+
+    public CondStatementDecl getCondStatementDecl() {
+        return CondStatementDecl;
+    }
+
+    public void setCondStatementDecl(CondStatementDecl CondStatementDecl) {
+        this.CondStatementDecl=CondStatementDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(CondStatementDecl!=null) CondStatementDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(CondStatementDecl!=null) CondStatementDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(CondStatementDecl!=null) CondStatementDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("ElseDeclaration(\n");
+
+        if(CondStatementDecl!=null)
+            buffer.append(CondStatementDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [ElseDeclaration]");
+        return buffer.toString();
+    }
+}

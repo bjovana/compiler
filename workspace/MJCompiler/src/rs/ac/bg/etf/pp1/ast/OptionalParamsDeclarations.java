@@ -1,0 +1,58 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class OptionalParamsDeclarations extends OptionalParamsDecl {
+
+    private ParamsDecl ParamsDecl;
+
+    public OptionalParamsDeclarations (ParamsDecl ParamsDecl) {
+        this.ParamsDecl=ParamsDecl;
+        if(ParamsDecl!=null) ParamsDecl.setParent(this);
+    }
+
+    public ParamsDecl getParamsDecl() {
+        return ParamsDecl;
+    }
+
+    public void setParamsDecl(ParamsDecl ParamsDecl) {
+        this.ParamsDecl=ParamsDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(ParamsDecl!=null) ParamsDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(ParamsDecl!=null) ParamsDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(ParamsDecl!=null) ParamsDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("OptionalParamsDeclarations(\n");
+
+        if(ParamsDecl!=null)
+            buffer.append(ParamsDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [OptionalParamsDeclarations]");
+        return buffer.toString();
+    }
+}

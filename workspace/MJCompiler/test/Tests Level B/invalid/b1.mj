@@ -1,0 +1,9 @@
+program B1
+
+{
+    void main()
+    {
+        if(5 > )
+            print(1);
+    }
+}

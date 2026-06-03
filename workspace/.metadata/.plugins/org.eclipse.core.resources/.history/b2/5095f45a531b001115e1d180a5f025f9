@@ -1,0 +1,16 @@
+program B3
+
+{
+	
+	int foo(int a, int b) {
+		print('f');
+		print('o');
+		print('o');
+		return(a + b);
+	}
+
+    void main()
+    {
+        return 5;
+    }
+}

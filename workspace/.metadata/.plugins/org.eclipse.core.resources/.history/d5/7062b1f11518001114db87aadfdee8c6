@@ -1,0 +1,9 @@
+package rs.ac.bg.etf.pp1.utils;
+
+public class CodeGeneratorUtils {
+	
+	
+	private CodeGeneratorUtils() {
+		// Prevents utils class instantiation
+	}
+}

@@ -1,0 +1,120 @@
+INFO  02:03:49,846 - Compiling source file: program.mj
+INFO  02:03:49,848 - 
+
+
+====================================================================== Abstract Syntax Tree ======================================================================
+INFO  02:03:49,881 - #2 program
+INFO  02:03:49,881 - #51 A2
+INFO  02:03:49,881 - #43 {
+INFO  02:03:49,881 - #8 void
+INFO  02:03:49,883 - #3 main
+INFO  02:03:49,883 - #41 (
+INFO  02:03:49,883 - #42 )
+INFO  02:03:49,883 - #5 int
+INFO  02:03:49,884 - #51 a
+INFO  02:03:49,884 - #47 ;
+INFO  02:03:49,884 - #43 {
+INFO  02:03:49,884 - #51 a
+INFO  02:03:49,884 - #35 =
+INFO  02:03:49,885 - #51 x
+INFO  02:03:49,885 - #31 +
+INFO  02:03:49,887 - #50 2
+INFO  02:03:49,888 - #31 +
+INFO  02:03:49,890 - #16 true
+INFO  02:03:49,890 - #47 ;
+INFO  02:03:49,890 - #44 }
+INFO  02:03:49,891 - #44 }
+INFO  02:03:49,892 - ProgramDecl(
+  ProgramNameDecl(
+   A2
+  ) [ProgramNameDecl]
+  GlobalObjectsEpsilon(
+  ) [GlobalObjectsEpsilon]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+  MainFuncDecl(
+    VoidMain(
+    ) [VoidMain]
+    VarDeclarations(
+      VarDeclarationsEpsilon(
+      ) [VarDeclarationsEpsilon]
+      VarDecl(
+        VarTypeInt(
+        ) [VarTypeInt]
+        SingleVarIdDecl(
+         a
+          VarArrayDeclarationEpsilon(
+          ) [VarArrayDeclarationEpsilon]
+        ) [SingleVarIdDecl]
+      ) [VarDecl]
+    ) [VarDeclarations]
+    StatementDeclarations(
+      StatementDeclDesignator(
+        DesignatorStatementDeclAssignment(
+          DesignatorDeclIdent(
+           a
+          ) [DesignatorDeclIdent]
+          ExprDeclaration(
+            ExprOptSignDeclEpsilon(
+            ) [ExprOptSignDeclEpsilon]
+            TermDecl(
+              FactorDeclDesignator(
+                DesignatorDeclIdent(
+                 x
+                ) [DesignatorDeclIdent]
+              ) [FactorDeclDesignator]
+              MulopFactorDeclarationsEpsilon(
+              ) [MulopFactorDeclarationsEpsilon]
+            ) [TermDecl]
+            AddopTermDeclarations(
+              AddopTermDeclarations(
+                AddopTermDeclarationsEpsilon(
+                ) [AddopTermDeclarationsEpsilon]
+                AddopDeclPlus(
+                ) [AddopDeclPlus]
+                TermDecl(
+                  FactorDeclChar(
+                   2
+                  ) [FactorDeclChar]
+                  MulopFactorDeclarationsEpsilon(
+                  ) [MulopFactorDeclarationsEpsilon]
+                ) [TermDecl]
+              ) [AddopTermDeclarations]
+              AddopDeclPlus(
+              ) [AddopDeclPlus]
+              TermDecl(
+                FactorDeclBool(
+                 true
+                ) [FactorDeclBool]
+                MulopFactorDeclarationsEpsilon(
+                ) [MulopFactorDeclarationsEpsilon]
+              ) [TermDecl]
+            ) [AddopTermDeclarations]
+          ) [ExprDeclaration]
+        ) [DesignatorStatementDeclAssignment]
+      ) [StatementDeclDesignator]
+      StatementDeclarationsEpsilon(
+      ) [StatementDeclarationsEpsilon]
+    ) [StatementDeclarations]
+  ) [MainFuncDecl]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+) [ProgramDecl]
+INFO  02:03:49,892 - ===============================================================================================================================================================================
+
+
+
+INFO  02:03:49,892 - ====================================================================== Semantic Analysis ======================================================================
+
+
+INFO  02:03:49,900 - Initialized a Symbol Table.
+INFO  02:03:49,902 - Opened the [A2] scope.
+INFO  02:03:49,902 - Opened the [main] scope.
+INFO  02:03:49,902 - Variable with name [a] has been added to the symbol table.
+ERROR 02:03:49,904 - Non existent designator [x] used at at line 7.
+ERROR 02:03:49,904 - Arithmetic operations are possible only for integer types. Error at line 12.
+ERROR 02:03:49,904 - Arithmetic operations are possible only for integer types. Error at line 12.
+INFO  02:03:49,904 - [main] scope level: 0
+INFO  02:03:49,904 - Closed [main] scope.
+INFO  02:03:49,904 - Closed [A2] scope.
+ERROR 02:03:49,905 - The input code is not semanticly correct. Obj file cannot be generated.

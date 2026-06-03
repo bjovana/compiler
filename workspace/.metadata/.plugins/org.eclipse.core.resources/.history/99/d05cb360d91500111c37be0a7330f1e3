@@ -1,0 +1,593 @@
+package rs.ac.bg.etf.pp1;
+
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
+
+import rs.ac.bg.etf.pp1.CounterVisitor.MethodParamCounter;
+import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+
+public class CodeGenerator extends VisitorAdaptor {
+	
+	private int mainPC;
+	
+	private static CodeGenerator codeGeneratorInstance = null;
+	
+	private static final Logger LOGGER = Logger.getLogger(CodeGenerator.class);
+	
+	private int ternaryOperatorFalseJumpAddress = -1;
+	private int ternaryOperatorTrueJumpAddress = -1;
+	
+	private Stack<Integer> switchCaseFalseJumps = new Stack<>();
+	private Stack<Integer> switchCaseTrueJumps = new Stack<>();
+	private Stack<Integer> switchBreakJumps = new Stack<>();
+	
+	private Stack<Integer> condFalseJumps = new Stack<>();
+	private Stack<Integer> condTrueJumps = new Stack<>();
+	
+	private Stack<Integer> forFalseJumps = new Stack<>();
+	private Stack<Integer> forStatementJumps = new Stack<>();
+	private Stack<Integer> forActionJumps = new Stack<>();
+	private Stack<Integer> forCondJumps = new Stack<>();
+	private Stack<Integer> forBreakJumps = new Stack<>();
+	private Stack<Integer> forContinueJumps = new Stack<>();
+		
+	/* <========================================================= Code Generator Instantiation =========================================================> */
+	
+	/**
+	 * Retrieves unique code generator instance.
+	 * 
+	 * @return Unique Code Generator Instance
+	 */
+	public static CodeGenerator getCodeGeneratorInstance() {
+		if (codeGeneratorInstance == null) {
+			codeGeneratorInstance = new CodeGenerator();
+		}
+		
+		return codeGeneratorInstance;
+	}
+	
+	private CodeGenerator() {
+		// Private constructor for preventing instantiation of a Code Generator out of base class since the class should be unique for the whole project 
+	}
+	
+    /* <============================================================================================================================> */
+	/* <========================================================= Visitors =========================================================> */
+	
+	/* Main function visitors */
+	
+	/**
+	 * Enters main function. Also current program counter has to be define as main PC because this is the program entry point.
+	 * 
+	 * @param voidMain Visited AST node
+	 */
+	public void visit(VoidMain voidMain) {
+		
+		// Defines entry point of our code
+		mainPC = Code.pc;
+		voidMain.obj.setAdr(Code.pc);
+		enterMethod(voidMain.getParent(), "MAIN");
+	}
+
+	public void visit(MainFuncDecl mainFuncDecl) {
+		exitMethod("MAIN");
+	}
+	
+	/* Main function visitors end*/
+	
+	/* Custom function visitors */
+	
+	/**
+	 * Enters custom non void defined function.
+	 * 
+	 * @param functionNonVoidType Visited AST node
+	 */
+	public void visit(FunctionNonVoidType functionNonVoidType) {
+		functionNonVoidType.obj.setAdr(Code.pc);
+		enterMethod(functionNonVoidType.getParent(), functionNonVoidType.getFunctionName());
+	}
+	
+	/**
+	 * Enters custom void defined function.
+	 * 
+	 * @param functionNonVoidType Visited AST node
+	 */
+	public void visit(FunctionVoidType functionVoidType) {
+		functionVoidType.obj.setAdr(Code.pc);
+		enterMethod(functionVoidType.getParent(), functionVoidType.getFunctionName());
+	}
+	
+	public void visit(CustomFuncDecl customFuncDecl) {
+		
+		FunctionType functionType = customFuncDecl.getFunctionType();
+		
+		exitMethod(functionType instanceof FunctionNonVoidType ? ((FunctionNonVoidType) functionType).getFunctionName() :
+																 ((FunctionVoidType) functionType).getFunctionName());
+	}
+	
+	/* Custom function visitors end */
+	
+	/* Designator visitors */
+	
+	public void visit(DesignatorDeclIdentArrayElemAccess designatorDeclIdentArrayElemAccess) {
+		Code.load(designatorDeclIdentArrayElemAccess.obj);
+		swap();
+	}
+	
+	public void visit(DesignatorDeclIdentLength designatorDeclIdentLength) {
+		Code.load(designatorDeclIdentLength.obj);
+		Code.put(Code.arraylength);
+	}
+	
+	/* Designator visitors end */
+		
+	/* Designator statements visitors */
+	
+	public void visit(DesignatorStatementDeclAssignment designatorStatementDeclAssignment) {	
+		
+		if (designatorStatementDeclAssignment.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclAssignment.getDesignatorDecl().obj);
+	}
+	
+	public void visit(DesignatorStatementDeclIncrement designatorStatementDeclIncrement) {
+				
+		final boolean isArrayElemAccess = designatorStatementDeclIncrement.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess;
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.dup2);
+			Code.put(Code.aload);
+		} else {
+			Code.load(designatorStatementDeclIncrement.getDesignatorDecl().obj);
+		}
+		
+		Code.loadConst(1);
+		Code.put(Code.add);
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclIncrement.getDesignatorDecl().obj);
+	}
+	
+	public void visit(DesignatorStatementDeclDecrement designatorStatementDeclDecrement) {
+		
+		final boolean isArrayElemAccess = designatorStatementDeclDecrement.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess;
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.dup2);
+			Code.put(Code.aload);
+		} else {
+			Code.load(designatorStatementDeclDecrement.getDesignatorDecl().obj);
+		}
+		
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclDecrement.getDesignatorDecl().obj);
+	}
+	
+	public void visit(DesignatorStatementDeclFunction designatorStatementDeclFunction) {
+		
+		Obj methodDesignator = designatorStatementDeclFunction.getDesignatorDecl().obj;
+		
+		Code.put(Code.call);
+		Code.put2(methodDesignator.getAdr() - Code.pc + 1);
+		
+		if (methodDesignator.getType() != Tab.nullType && methodDesignator.getType() != Tab.noType) {
+			Code.put(Code.pop);
+		}
+	}
+	
+	/* Designator statements visitors end */
+	
+	/* Statement visitors */
+	
+	public void visit(StatementDeclPrint statementDeclPrint) {
+		final int widht = statementDeclPrint.getPrintArgsDecl() instanceof PrintArgsDeclaration ? 
+																							((PrintArgsDeclaration) statementDeclPrint.getPrintArgsDecl()).getNumberLiteral() :
+																							statementDeclPrint.getExprDecl().struct == Tab.charType ? 1 : 5;
+		Code.loadConst(widht);
+		Code.put(Code.print);
+	}
+	
+	public void visit(StatementDeclRead statementDeclRead) {
+				
+		if (statementDeclRead.getDesignatorDecl().obj.getType().getKind() == Tab.charType.getKind()) {
+			Code.put(Code.bread);
+		} else {
+			Code.put(Code.read);
+		}
+		
+		Code.store(statementDeclRead.getDesignatorDecl().obj);
+	}
+	
+	public void visit(StatementDeclReturn statementDeclReturn) {
+		exitMethod("");
+	}
+	
+	/* Switch declarations */
+	
+	public void visit(Case caseDecl) {
+		
+		if (!switchCaseFalseJumps.empty()) {
+			Code.fixup(switchCaseFalseJumps.pop());
+		}
+		
+		Code.put(Code.dup);
+		Code.loadConst(caseDecl.getNumberLiteral());
+		Code.putFalseJump(Code.eq, 0);
+		
+		switchCaseFalseJumps.push(Code.pc - 2);
+		
+		if (!switchCaseTrueJumps.empty()) {
+			Code.fixup(switchCaseTrueJumps.pop());
+		}
+	}
+	
+	public void visit(SwitchOptionalStatementDeclarations optionalStatementDeclarations) {
+		Code.putJump(0);
+		switchCaseTrueJumps.push(Code.pc - 2);
+	}
+	
+	public void visit(StatementDeclSwitch statementDeclSwitch) {
+		Code.put(Code.pop);
+		
+		if (!switchCaseFalseJumps.empty()) {
+			Code.fixup(switchCaseFalseJumps.pop());
+		}
+		
+		if (!switchCaseTrueJumps.empty()) {
+			Code.fixup(switchCaseTrueJumps.pop());
+		}
+		
+		if (!switchBreakJumps.empty()) {
+			Code.fixup(switchBreakJumps.pop());
+		}
+	}
+	
+	/* Switch declarations end */
+	
+	/* If declarations */
+	
+	public void visit(CondStatementDeclarations condStatementDeclarations) {
+		
+		if (!(condStatementDeclarations.getParent() instanceof ElseDecl)) {
+			Code.putJump(0);
+			condTrueJumps.push(Code.pc - 2);
+			
+			if (!condFalseJumps.empty()) 
+				Code.fixup(condFalseJumps.pop());
+		}
+	}
+	
+	public void visit(CondStatementDeclaration condStatementDeclaration) {
+		
+		if (!(condStatementDeclaration.getParent() instanceof ElseDecl)) {
+			Code.putJump(0);
+			condTrueJumps.push(Code.pc - 2);
+			
+			if (!condFalseJumps.empty()) 
+				Code.fixup(condFalseJumps.pop());		}
+	}
+		
+	public void visit(StatementDeclIf statementDeclIf) {
+		Code.fixup(condTrueJumps.pop());
+	}
+	
+	/* If declarations end */
+	
+	/* For statement declarations */
+	
+	public void visit(StatementDeclFor statementDeclFor) {
+		if (!forFalseJumps.empty())
+			Code.fixup(forFalseJumps.pop());
+		
+		if (!forBreakJumps.empty())
+			Code.fixup(forBreakJumps.pop());
+	}
+		
+	public void visit(Rparen rparen) {
+		if (!forStatementJumps.empty()) 
+			Code.fixup(forStatementJumps.pop());
+	}
+	
+	public void visit(Lparen lparen) {
+		forCondJumps.push(Code.pc);
+	}
+	
+	public void visit(ForStatementDeclaration forStatementDeclaration) {
+		Code.putJump(forActionJumps.pop());
+	}
+	
+	public void visit(ForStatementDeclarations forStatementDeclarations) {
+		Code.putJump(forActionJumps.pop());
+	}
+	
+	public void visit(ForCondition forCondition) {
+		Code.putJump(0);
+		forStatementJumps.push(Code.pc - 2);
+		forActionJumps.push(Code.pc);
+	}
+	
+	public void visit(ForConditionEpsilon forConditionEpsilon) {
+		Code.putJump(0);
+		forStatementJumps.push(Code.pc - 2);
+		forActionJumps.push(Code.pc);
+	}
+	
+	public void visit(ForDesignator forDesignator) {
+		if (forDesignator.getParent() instanceof StatementDeclFor) {
+			Code.putJump(forCondJumps.pop());
+		}
+	}
+	
+	public void visit(ForDesignatorEpsilon forDesignatorEpsilon) {
+		if (forDesignatorEpsilon.getParent() instanceof StatementDeclFor) {
+			Code.putJump(forCondJumps.pop());
+		}
+	}
+		
+	/* For statement declarations end */
+	
+	/* Break and Continue declarations */
+	
+	public void visit(StatementDeclBreak statementDeclBreak) {
+		
+		SyntaxNode parent = statementDeclBreak.getParent();
+		
+		while (parent != null && !(parent instanceof ForStatementDecl) && !(parent instanceof SwitchOptionalStatementDeclList)) {
+			parent = parent.getParent();
+		}
+		
+		if (parent == null) {
+			return;
+		}
+		
+		if (parent instanceof ForStatementDecl) {
+			Code.putJump(0);
+			forBreakJumps.push(Code.pc - 2);
+		}
+
+		if (parent instanceof SwitchOptionalStatementDeclList) {
+			Code.putJump(0);
+			switchBreakJumps.push(Code.pc - 2);
+		}
+		
+	}
+	
+	public void visit(StatementDeclContinue statementDeclContinue) {
+		Code.putJump(0);
+		forContinueJumps.push(Code.pc - 2);
+	}
+	
+	/* Break and Continue declarations end */
+	
+	/* Statement visitors end */
+	
+	/* Factor visitors - LOAD OPERANDS TO STACK */
+	
+	public void visit(FactorDeclNumber factorDeclNumber) {
+		Code.loadConst(factorDeclNumber.getNumberLiteral());
+	}
+	
+	public void visit(FactorDeclChar factorDeclChar) {
+		Code.loadConst(factorDeclChar.getCharLiteral());
+	}
+	
+	public void visit(FactorDeclBool factorDeclBool) {
+		Code.loadConst(factorDeclBool.getBoolLiteral() ? 1 : 0);
+	}
+	
+	public void visit(FactorDeclDesignator factorDeclDesignator) {
+		
+		if (factorDeclDesignator.getDesignatorDecl() instanceof DesignatorDeclIdentLength) {
+			return;
+		}
+		
+		if (factorDeclDesignator.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess) {
+			Code.put(Code.aload);
+			
+			return;
+		}
+		
+		Code.load(factorDeclDesignator.getDesignatorDecl().obj);
+	}
+	
+	public void visit(FactorDeclAllocationExpr factorDeclAllocationExpr) {
+	    
+		Code.put(Code.newarray);
+		
+		if (factorDeclAllocationExpr.getVarType().struct == Tab.charType) {
+	        Code.put(0);
+	        return;
+	    } 
+	        
+	    Code.put(1); 
+	}
+	
+	public void visit(FactorDeclFunctionCall factorDeclFunctionCall) {
+		Code.put(Code.call);
+		Code.put2(factorDeclFunctionCall.getDesignatorDecl().obj.getAdr() - Code.pc + 1);
+	}
+	
+	/* Factor visitors end */
+	
+	/* Term visitors - Put ADD and MUL operation */
+	
+	public void visit(MulopFactorDeclarations mulopFactorDeclarations) {
+		MulopDecl mulop = mulopFactorDeclarations.getMulopDecl();
+		
+		if (mulop instanceof MulopDeclMul) {
+			Code.put(Code.mul);
+		} else if (mulop instanceof MulopDeclDiv) {
+			Code.put(Code.div);
+		} else {
+			Code.put(Code.rem);
+		}
+	}
+	
+	public void visit(AddopTermDeclarations addopTermDeclarations) {
+		
+		if (addopTermDeclarations.getParent() instanceof ExprDeclaration exprDecl) {
+			if (exprDecl.getExprOptSignDecl().struct == Tab.intType) {
+				Code.put(Code.neg);	
+			}
+		}
+		
+		AddopDecl addop = addopTermDeclarations.getAddopDecl();
+		
+		if (addop instanceof AddopDeclPlus) {
+			Code.put(Code.add);
+		} else {
+			Code.put(Code.sub);
+		}
+	}
+	
+	/* Term visitors end */
+	
+	/* Expression visitors - Ternary operations and unary minus  */
+	
+	public void visit(ExprDeclaration exprDeclaration) {
+		if (exprDeclaration.getExprOptSignDecl().struct != Tab.nullType) {
+			Code.put(Code.neg);
+		}
+	}
+	
+	
+	public void visit(CondFactDecl condFactDecl) {
+		int relop;
+		
+		if (condFactDecl.getCondFactOptArgDecl().struct == Tab.nullType) {
+			Code.loadConst(1);
+			relop = Code.eq;
+		}
+		
+		else {
+			RelopDecl relopDecl = ((CondFactOptArgDeclaration) condFactDecl.getCondFactOptArgDecl()).getRelopDecl();
+			
+			if (relopDecl instanceof RelopDeclEQ) {
+				relop = Code.eq;
+			} else if (relopDecl instanceof RelopDeclNE) {
+				relop = Code.ne;
+			} else if (relopDecl instanceof RelopDeclGT) {
+				relop = Code.gt;
+			} else if (relopDecl instanceof RelopDeclGE) {
+				relop = Code.ge;
+			} else if (relopDecl instanceof RelopDeclLT) {
+				relop = Code.lt;
+			} else {
+				relop = Code.le;
+			}
+		}
+		
+		Code.putFalseJump(relop, 0);
+		
+		SyntaxNode jumpKind = condFactDecl.getParent();
+		
+		while (jumpKind != null) {
+			
+			if (jumpKind instanceof ExprDeclarationTernaryOp) {
+				ternaryOperatorFalseJumpAddress = Code.pc - 2;
+				break;
+			} 
+			
+			if (jumpKind instanceof StatementDeclIf) {
+				condFalseJumps.push(Code.pc - 2);
+				break;
+			}
+			
+			if (jumpKind instanceof StatementDeclFor) {
+				forFalseJumps.push(Code.pc - 2);
+				break;
+			}
+			
+			jumpKind = jumpKind.getParent();
+		}
+		
+	}
+	
+	public void visit(ConditionOrPartDeclaration conditionOrPartDeclaration) {
+		
+		if (!condFalseJumps.empty())
+			Code.fixup(condFalseJumps.pop());
+	
+	}
+	
+	public void visit(Colon colon) {
+		
+		// Jump over else part
+		Code.putJump(0);
+		ternaryOperatorTrueJumpAddress = Code.pc - 2;
+	
+		Code.fixup(ternaryOperatorFalseJumpAddress);
+		ternaryOperatorFalseJumpAddress = -1;
+	}
+	
+	public void visit(ExprDeclarationTernaryOp exprlDeclarationTernaryOp) {
+		Code.fixup(ternaryOperatorTrueJumpAddress);
+		ternaryOperatorTrueJumpAddress = -1;
+	}
+	
+	/* Expression visitors end */
+	
+    /* <=========================================================================================================================> */
+	/* <========================================================= Utils =========================================================> */
+	
+	public int getMainPC() {
+		return mainPC;
+	}
+
+	/**
+	 * Loads the local variables and formal parameters. Enters the method code.
+	 * 
+	 * @param methodNode Method for execution
+	 */
+	private void enterMethod(SyntaxNode methodNode, String methodName) {
+		
+		VarCounter varCounter = new VarCounter();
+		methodNode.traverseTopDown(varCounter);
+		
+		MethodParamCounter fpCounter = new MethodParamCounter();
+		methodNode.traverseTopDown(fpCounter);
+		
+		// Generate the entry
+		Code.put(Code.enter);
+		Code.put(fpCounter.getCount());
+		Code.put(fpCounter.getCount() + varCounter.getCount());
+	
+		LOGGER.info(String.format("Entered [%s] method flow.", methodName));
+	}
+	
+	/**
+	 * Exit the method code and returns to the main flow.
+	 */
+	private void exitMethod(String methodName) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		
+		LOGGER.info(String.format("Finished [%s] method flow.", methodName));
+	}
+	
+	/**
+	 * Swaps 2 last element on stack.
+	 */
+	private void swap() {
+	    Code.put(Code.dup_x1);
+	    Code.put(Code.pop);
+	}
+} 

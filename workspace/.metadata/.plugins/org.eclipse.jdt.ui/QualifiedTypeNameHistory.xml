@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.lang.String"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.utils.ConstantUtils"/>
+    <fullyQualifiedTypeName name="java.lang.Object"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.TermDecl"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesignatorDeclIdentArrayElemAccess"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesignatorDeclIdentLength"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.StatementDeclReturnEpsilon"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.StatementDeclReturn"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.FunctionType"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.FunctionNonVoidType"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.FunctionVoidType"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ForConditionEpsilon"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.StatementDeclFor"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConditionOrPartDecl"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.constants.ErrorUtils"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.utils.CodeGeneratorUtils"/>
+    <fullyQualifiedTypeName name="java.lang.System.Logger"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.Tab"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.utils.ErrorUtils"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstVal"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstValChar"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstValBool"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstValNumber"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.constants.ErrorConstants"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.SyntaxNode"/>
+    <fullyQualifiedTypeName name="java.util.Collection"/>
+    <fullyQualifiedTypeName name="com.sun.org.slf4j.internal.LoggerFactory"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.concepts.Struct"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.utils.SemanticAnalyzerUtils"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="org.apache.log4j.Logger"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ClassName"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesignatorDeclIdentField"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesignatorDeclDot"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesignatorDeclCaret"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.concepts.Obj"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.CodeGenerator"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.mj.runtime.Code"/>
+    <fullyQualifiedTypeName name="java.util.HashMap"/>
+    <fullyQualifiedTypeName name="java.util.Stack"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,118 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class EnumDecl implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+
+    private EnumName EnumName;
+    private EnumItem EnumItem;
+    private EnumItemDeclList EnumItemDeclList;
+
+    public EnumDecl (EnumName EnumName, EnumItem EnumItem, EnumItemDeclList EnumItemDeclList) {
+        this.EnumName=EnumName;
+        if(EnumName!=null) EnumName.setParent(this);
+        this.EnumItem=EnumItem;
+        if(EnumItem!=null) EnumItem.setParent(this);
+        this.EnumItemDeclList=EnumItemDeclList;
+        if(EnumItemDeclList!=null) EnumItemDeclList.setParent(this);
+    }
+
+    public EnumName getEnumName() {
+        return EnumName;
+    }
+
+    public void setEnumName(EnumName EnumName) {
+        this.EnumName=EnumName;
+    }
+
+    public EnumItem getEnumItem() {
+        return EnumItem;
+    }
+
+    public void setEnumItem(EnumItem EnumItem) {
+        this.EnumItem=EnumItem;
+    }
+
+    public EnumItemDeclList getEnumItemDeclList() {
+        return EnumItemDeclList;
+    }
+
+    public void setEnumItemDeclList(EnumItemDeclList EnumItemDeclList) {
+        this.EnumItemDeclList=EnumItemDeclList;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(EnumName!=null) EnumName.accept(visitor);
+        if(EnumItem!=null) EnumItem.accept(visitor);
+        if(EnumItemDeclList!=null) EnumItemDeclList.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(EnumName!=null) EnumName.traverseTopDown(visitor);
+        if(EnumItem!=null) EnumItem.traverseTopDown(visitor);
+        if(EnumItemDeclList!=null) EnumItemDeclList.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(EnumName!=null) EnumName.traverseBottomUp(visitor);
+        if(EnumItem!=null) EnumItem.traverseBottomUp(visitor);
+        if(EnumItemDeclList!=null) EnumItemDeclList.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("EnumDecl(\n");
+
+        if(EnumName!=null)
+            buffer.append(EnumName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(EnumItem!=null)
+            buffer.append(EnumItem.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(EnumItemDeclList!=null)
+            buffer.append(EnumItemDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [EnumDecl]");
+        return buffer.toString();
+    }
+}

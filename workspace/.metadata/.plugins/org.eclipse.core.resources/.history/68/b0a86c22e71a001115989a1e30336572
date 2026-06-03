@@ -1,0 +1,76 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class Lparen implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    private ForDesignatorOpt ForDesignatorOpt;
+
+    public Lparen (ForDesignatorOpt ForDesignatorOpt) {
+        this.ForDesignatorOpt=ForDesignatorOpt;
+        if(ForDesignatorOpt!=null) ForDesignatorOpt.setParent(this);
+    }
+
+    public ForDesignatorOpt getForDesignatorOpt() {
+        return ForDesignatorOpt;
+    }
+
+    public void setForDesignatorOpt(ForDesignatorOpt ForDesignatorOpt) {
+        this.ForDesignatorOpt=ForDesignatorOpt;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(ForDesignatorOpt!=null) ForDesignatorOpt.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(ForDesignatorOpt!=null) ForDesignatorOpt.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(ForDesignatorOpt!=null) ForDesignatorOpt.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("Lparen(\n");
+
+        if(ForDesignatorOpt!=null)
+            buffer.append(ForDesignatorOpt.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [Lparen]");
+        return buffer.toString();
+    }
+}

@@ -1,0 +1,8 @@
+program Bbad2
+
+{
+    void main()
+    {
+        break;
+    }
+}

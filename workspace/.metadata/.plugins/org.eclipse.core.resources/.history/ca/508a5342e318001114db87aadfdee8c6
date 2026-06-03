@@ -1,0 +1,40 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import rs.ac.bg.etf.pp1.CounterVisitor.MethodParamCounter;
+import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.*;
+
+public class CodeGeneratorUtils {
+
+	public static void generateBuiltInsCode() {
+		
+	}
+	
+	public static void enterMethod(SyntaxNode syntaxNode) {
+		VarCounter varCounter = new VarCounter(); 
+		syntaxNode.traverseTopDown(varCounter); 
+		
+		MethodParamCounter fpCounter = new MethodParamCounter(); 
+		syntaxNode.traverseTopDown(fpCounter); 
+		
+		// Generate the entry 
+		Code.put(Code.enter); 
+		Code.put(fpCounter.getCount()); 
+		Code.put(fpCounter.getCount() + varCounter.getCount());
+	}
+	
+	public static void exitMethod() {
+		Code.put(Code.exit); 
+		Code.put(Code.return_);
+	}
+	
+	public static void swap() {
+	    Code.put(Code.dup_x1); 
+	    Code.put(Code.pop); 
+	}
+	
+	private CodeGeneratorUtils() {
+		// Private constructor for preventing utils class instantiation
+	}
+}

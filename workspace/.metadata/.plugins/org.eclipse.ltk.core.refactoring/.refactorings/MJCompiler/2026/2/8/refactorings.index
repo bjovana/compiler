@@ -1,0 +1,60 @@
+1771200099065	Delete element
+1771200183070	Delete element
+1771201181435	Move file
+1771201236485	Rename type 'MJTest'
+1771242385335	Move package
+1771242387391	Move package
+1771246527148	Delete element
+1771246557526	Delete element
+1771246833065	Rename type 'sym'
+1771247446001	Delete element
+1771255497675	Move compilation unit
+1771255509316	Move compilation unit
+1771255615521	Delete element
+1771255623968	Delete element
+1771255631505	Delete element
+1771255682787	Move compilation unit
+1771255688130	Delete element
+1771255692463	Delete element
+1771257385294	Delete elements
+1771288071995	Delete element
+1771288080367	Delete element
+1771327386134	Delete element
+1771327426926	Delete element
+1771327452665	Delete elements
+1771327972659	Delete element
+1771328950389	Delete elements
+1771330439097	Delete element
+1771343455455	Delete element
+1771343843598	Delete element
+1771343971270	Delete element
+1771351773735	Rename type 'SemanticAnalyzator'
+1771369481582	Rename method 'setConstObjectAdress'
+1771369805122	Rename type 'MJParserTest'
+1771369835538	Rename local variable 'log'
+1771373301760	Rename local variable 'constTypeIdent'
+1771440668629	Rename field 'nameAlreadyDeclaredError'
+1771441612989	Rename field 'NON_EXISTENT_TYPE'
+1771441730559	Rename field 'UNALLOWED_VALUE_ASSIGNMENT_ERROR'
+1771442535239	Rename local variable 'multiVarIdDecl'
+1771443908647	Rename local variable 'VarDecl'
+1771449737511	Rename local variable 'methodParamsDecl'
+1771449936484	Rename local variable 'varName'
+1771449952956	Rename local variable 'varArrayStruct'
+1771449981240	Rename method 'addVariableToTheSymbolTable'
+1771523108428	Rename local variable 'designatorDeclIdent'
+1771523183011	Rename local variable 'object'
+1771523201864	Rename local variable 'obj'
+1771523250164	Rename local variable 'designatorObject'
+1771524051373	Rename local variable 'designatorObject'
+1771524318208	Rename local variable 'designatorObject'
+1771527098948	Rename field 'INVALID_ARRAY_ACCESS'
+1771527119082	Rename field 'INVALID_ARRAY_INDEXING'
+1771534791289	Rename local variable 'mulopFactorDeclarations'
+1771534895055	Rename field 'INVALID_TERNARY_CODNITION_ERROR'
+1771541111291	Rename local variable 'node'
+1771626275649	Rename field 'INVALID_ARRAY_INDEXING_RROR'
+1771629498642	Rename local variable 'condFactOptArgDeclaration'
+1771630853350	Rename method 'findObjectInTheSimbolTable'
+1771694482736	Rename local variable 'SingleVarIdDecl'
+1771702460881	Rename local variable 'designatorStatementDeclIncrement'

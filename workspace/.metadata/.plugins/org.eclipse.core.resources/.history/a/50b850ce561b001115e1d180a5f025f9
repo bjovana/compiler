@@ -1,0 +1,234 @@
+<html>
+<head>
+    <title>MicroJava Compiler</title>
+</head>
+
+<body>
+
+<h1>MicroJava Compiler</h1>
+
+<p>
+This project represents an implementation of a <b>MicroJava compiler</b>.
+</p>
+
+<p>
+The compiler is implemented in Java and consists of the following components:
+</p>
+
+<ul>
+    <li><b>Lexical Analyzer</b> (JFlex)</li>
+    <li><b>Syntax Analyzer</b> (Java CUP)</li>
+    <li><b>Semantic Analyzer</b></li>
+    <li><b>Code Generator</b> for the MicroJava virtual machine</li>
+</ul>
+
+<hr>
+
+<h2>Supported Language Features</h2>
+
+<p>The compiler supports the following MicroJava language constructs:</p>
+
+<ul>
+<li><b>Basic constructs</b>
+    <ul>
+        <li>Global constants, variables and enumerations</li>
+        <li>Local variables</li>
+        <li>Functions and the <code>main</code> function</li>
+    </ul>
+</li>
+
+<li><b>Expressions</b>
+    <ul>
+        <li>Arithmetic expressions (+, -, *, /, %)</li>
+        <li>Unary minus</li>
+        <li>Relational operators</li>
+        <li>Ternary operator (<code>? :</code>)</li>
+    </ul>
+</li>
+
+<li><b>Arrays</b>
+    <ul>
+        <li>Creation of arrays (<code>new Type[Expr]</code>)</li>
+        <li>Array indexing</li>
+        <li><code>length</code> and Built-in <code>len</code> property</li>
+    </ul>
+</li>
+
+<li><b>Statements</b>
+    <ul>
+        <li>Assignment</li>
+        <li>Increment / decrement</li>
+        <li>Function calls</li>
+        <li><code>read</code> and <code>print</code></li>
+    </ul>
+</li>
+
+<li><b>Control flow</b>
+    <ul>
+        <li><code>if / else</code></li>
+        <li><code>for</code> loops</li>
+        <li><code>switch</code> statements</li>
+        <li><code>break</code> and <code>continue</code></li>
+        <li><code>return</code></li>
+    </ul>
+</li>
+
+</ul>
+
+<hr>
+
+<h2>Simplified Project Structure</h2>
+
+<pre>
+MJCompiler/ <br>
+│<br>
+├── spec/ <br>
+│   ├── mjlexer.lex        -> JFlex specification (lexer) <br>
+│   └── mjparser.cup       -> CUP grammar specification (parser) <br>
+│<br>
+├── src/rs/ac/bg/etf/pp1/ <br>
+│   ├── Yylex.java         -> Generated lexical analyzer <br>
+│   ├── MJParser.java      -> Generated parser <br>
+│   ├── sym.java           -> Symbol definitions <br>
+│   ├── SemanticAnalyzer.java <br>
+│   ├── CodeGenerator.java <br>
+│   ├── utils/ <br>
+│   └── ast/               -> Generated Abstract Syntax Tree classes <br>
+│<br>
+├── lib/ <br>
+│   ├── JFlex.jar <br>
+│   ├── cup_v10k.jar <br>
+│   └── log4j-1.2.17.jar <br>
+│<br>
+└── build.xml              -> Ant build script <br>
+</pre>
+
+<hr>
+
+<h2>Lexical Analyzer</h2>
+
+<p>
+The <b>lexical analyzer</b> is implemented using <b>JFlex</b>.  
+Its role is to read a MicroJava source file and convert the input character stream into a sequence of tokens.
+</p>
+
+<p>
+The lexer specification is located in:
+</p>
+
+<pre>spec/mjlexer.lex</pre>
+
+<p>
+The lexer recognizes the following categories of tokens:
+</p>
+
+<ul>
+<li>Keywords (<code>program</code>, <code>if</code>, <code>for</code>, <code>switch</code>, etc.)</li>
+<li>Identifiers</li>
+<li>Integer, character and boolean constants</li>
+<li>Operators and punctuation symbols</li>
+<li>Comments (ignored)</li>
+</ul>
+
+<hr>
+
+<h2>Syntax Analyzer</h2>
+
+<p>
+The <b>syntax analyzer</b> is implemented using <b>Java CUP</b>.  
+It parses the token stream produced by the lexer and constructs an <b>Abstract Syntax Tree (AST)</b>.
+</p>
+
+<p>
+The grammar specification is defined in:
+</p>
+
+<pre>spec/mjparser.cup</pre>
+
+<p>
+CUP generates the following classes:
+</p>
+
+<ul>
+<li><b>MJParser.java</b> – LR parser implementation</li>
+<li><b>sym.java</b> – terminal symbol definitions</li>
+<li><b>AST classes</b> – generated syntax tree nodes</li>
+</ul>
+
+<hr>
+
+<h2>Semantic Analysis</h2>
+
+<p>
+The semantic analyzer performs checks such as:
+</p>
+
+<ul>
+<li>Symbol table management</li>
+<li>Type compatibility checking</li>
+<li>Validation of function calls and parameters</li>
+<li>Control flow correctness (<code>break</code>, <code>continue</code>, <code>return</code>)</li>
+</ul>
+
+<hr>
+
+<h2>Code Generation</h2>
+
+<p>
+After successful semantic analysis, the compiler generates bytecode for the 
+<b>MicroJava virtual machine</b>.
+</p>
+
+<p>
+The generated code is written to a <code>.obj</code> file which can be executed using the MicroJava runtime.
+</p>
+
+<hr>
+
+<h2>Building and Running the Compiler</h2>
+
+<p>The project uses <b>Apache Ant</b> for building.</p>
+
+<h3>Build</h3>
+
+<pre>
+ant compile
+</pre>
+
+<p>
+This command:
+</p>
+
+<ul>
+<li>Generates parser code (AST Classes).</li>
+<li>Compiles the entire project</li>
+</ul>
+
+<p>
+Before compiling project, it is important for lexer to be generated. It can be done by running:
+</p>
+
+<pre>
+ant lexerGen
+</pre>
+
+<h3>Running the compiler</h3>
+
+<pre>
+ant runObj
+</pre>
+
+<p>
+This target:
+</p>
+
+<ul>
+<li>Compiles the MicroJava source program</li>
+<li>Generates the <code>.obj</code> file</li>
+<li>Runs the program on the MicroJava virtual machine</li>
+</ul>
+
+<hr>
+
+</body>
+</html>

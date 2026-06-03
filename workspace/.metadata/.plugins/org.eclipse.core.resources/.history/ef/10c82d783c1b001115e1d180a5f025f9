@@ -1,0 +1,219 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import org.apache.log4j.Logger;
+
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.*;
+
+import static rs.ac.bg.etf.pp1.constants.ErrorConstants.*;
+
+public class SemanticAnalyzerUtils {
+	
+	private static final Logger LOGGER = Logger.getLogger(SemanticAnalyzerUtils.class);
+		
+	/**
+	 * Logs semantic error to the standard output.
+	 * 
+	 * @param errorMessage Message to be logged
+	 * @param syntaxNode   Node visited when error was found
+	 */
+	public static void reportError(String errorMessage, SyntaxNode syntaxNode) {
+		final int line = syntaxNode != null ? syntaxNode.getLine() : 0;
+		LOGGER.error(String.format("%s at line %s.", errorMessage, line));
+	}
+	
+	/**
+	 * Opens scope for the object with the given kind, name and type.
+	 * 
+	 * @param scopeKind Scope kind - Method, Enum, Class, Program
+	 * @param scopeName Scope name - unique ident
+	 * @param scopeType Scope type
+	 * @return Inserted object
+	 */
+	public static Obj openScope(int scopeKind, String scopeName, Struct scopeType) {
+		Obj scope = Tab.insert(scopeKind, scopeName, scopeType);
+		Tab.openScope();
+		
+		LOGGER.info(String.format("Opened the [%s] scope.", scopeName));
+		return scope;
+	}
+	
+	/**
+	 * Chains local symbols and closes the scope.
+	 * 
+	 * @param scopeObj  Scope to be closed
+	 * @param scopeName Scope name
+	 */
+	public static void closeScope(Obj scopeObj, String scopeName) {
+		Tab.chainLocalSymbols(scopeObj);
+		Tab.closeScope();
+		
+		LOGGER.info(String.format("Closed [%s] scope.", scopeName));
+	}
+	
+	/**
+	 * Search for the object with the given name in the symbol table.
+	 * 
+	 * @param object     Found object
+	 * @param objectName Expected object name
+	 * @return Found object
+	 */
+	public static Obj findObjectInTheSymbolTable(SyntaxNode object, String objectName) {
+		Obj foundObj = Tab.find(objectName);
+		
+		if (foundObj == Tab.noObj) {
+			reportError(String.format(NON_EXISTENT_OBJ_ERROR, objectName), object);
+		}
+		
+		return foundObj;
+	}
+	
+	/**
+	 * Inserts constant object to the symbol table. 
+	 * 
+	 * @param constType Constant Type
+	 * @param constVal  Constant Address
+	 * @param constName Constant Name
+	 * @return Inserted object
+	 */
+	public static Obj insertConstantToSymbolTable(Struct constType, ConstVal constVal, String constName) {
+		Obj constObj = Tab.insert(Obj.Con, constName, constType);
+		
+		if (constVal instanceof ConstValChar) {
+			ConstValChar constValChar = (ConstValChar) constVal;
+			constObj.setAdr(constValChar.getCharLiteral());
+		} else if (constVal instanceof ConstValBool) {
+			ConstValBool constValBool = (ConstValBool) constVal;
+			constObj.setAdr(constValBool.getBoolLiteral() ? 1 : 0);
+		} else if (constVal instanceof ConstValNumber) {
+			ConstValNumber constValNumber = (ConstValNumber) constVal;
+			constObj.setAdr(constValNumber.getNumberLiteral());
+		}
+		
+		return constObj;
+	}
+	
+	/**
+	 * Checks whether declared type exists or no. If exists, ensures that it can be used as type.
+	 * 
+	 * @param typeNode Visited AST node
+	 * @param typeName Declared type name
+	 * @return Found object if it exists and can be used as type 
+	 */
+	public static Obj validateObjectType(SyntaxNode typeNode, String typeName) {
+		
+		Obj obj = Tab.find(typeName);		
+
+		// Forwarded custom type doesn't exist
+		if (obj == Tab.noObj) {			
+			reportError(NON_EXISTENT_TYPE_ERROR, typeNode);
+			return Tab.noObj;
+		}
+		
+		// Check whether declared type can be used as type
+		if (obj.getKind() != Obj.Type) {
+			reportError(UNALLOWED_TYPE_ASSIGNMENT_ERROR, typeNode);
+			return Tab.noObj;
+		}
+		
+		return obj;
+		
+	}
+	
+	/**
+	 * Looks for the given name in the current scope and reports error if the name exists.
+	 * 
+	 * @param node Visited AST Node
+	 * @param name Given object name
+	 * @return True if name exists, otherwise false
+	 */
+	public static boolean doesNameExists(SyntaxNode node, String name) {
+    	if (Tab.currentScope().findSymbol(name) != null) {
+    		reportError(String.format(NAME_ALREADY_DECLARED_ERROR, name), node);    		
+    		return true;
+    	}
+    	
+    	return false;
+	}
+	
+	/**
+	 * Checks whether given types are assignable to each other.
+	 * 
+	 * @param node         Visited AST node
+	 * @param type1        Node type
+	 * @param type2        Node type
+	 * @param errorMessage Error that should be reported if types are not assignable to each other
+	 * @return True if assignable, otherwise false
+	 */
+	public static boolean typesAssignable(SyntaxNode node, Struct type1, Struct type2, String errorMessage) {
+		
+		if (!type1.assignableTo(type2)) {
+			reportError(errorMessage, node);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Ensures that increment and decrement operations are called only for integer variables.
+	 * 
+	 * @param node      Visited AST node
+	 * @param objKind   Obj Kind (Cannot be Con)
+	 * @param objType   Obj type - must be int
+	 * @param operation Increment / Decrement
+	 * @return True if operation is valid, otherwise false
+	 */
+	public static boolean validIncrDectOperation(SyntaxNode node, int objKind, Struct objType, String operation) {
+    	
+		// Incrementing / Decrementing constant
+    	if (objKind == Obj.Con) {    		
+    		reportError(String.format(ILLEGAL_CONST_INCREMENT_DECREMENT_ERROR, operation), node);    		
+    		return false;
+    	}
+    	
+    	// Check if forwarded object is not int
+    	if (objType.getKind() != Struct.Int) {    		
+    		reportError(String.format(UNALLOWED_INCREMENT_DECREMENT_TYPE, operation), node);    		
+    		return false;
+    	}
+    	
+    	return true;
+	}
+	
+	/**
+	 * Ensures that function is called only for method kind objects. Checks number of forwarded params.s
+	 * 
+	 * @param node                Visited AST node
+	 * @param methodObj           Designator object
+	 * @param expectedParamNumber Number of function params
+	 * @return True if function call is valid, otherwise false
+	 */
+	public static boolean validFunctionCall(SyntaxNode node, Obj methodObj, int expectedParamNumber) {
+		
+    	// Function call for non function kind
+    	if (methodObj.getKind() != Obj.Meth) {
+    		reportError(String.format(FUNCTION_CALL_NON_METH_OBJECT_ERROR, methodObj.getName()), node);    		
+    		return false;
+    	}
+    	
+    	// Wrong number of parameter listed
+    	if (methodObj.getLevel() != expectedParamNumber) {    		
+    		reportError(String.format(FUNCTION_CALL_INVALID_PARAMS_NUMBER_ERROR, methodObj.getLevel(), expectedParamNumber), node);    		
+    		return false;
+    	}
+	
+    	return true;
+	}
+	
+	public static boolean validateFunctionCallArguments(SyntaxNode node, )
+	
+	public static Obj getInstantiatedClassObj(String objectName) {
+		return null;
+	}
+	
+	private SemanticAnalyzerUtils() {
+		// Private constructor for preventing utils class instantiation
+	}
+}

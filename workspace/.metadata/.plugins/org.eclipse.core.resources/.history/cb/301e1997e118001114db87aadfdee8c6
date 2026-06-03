@@ -1,0 +1,97 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import org.apache.log4j.Logger;
+
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.*;
+
+import static rs.ac.bg.etf.pp1.utils.ErrorUtils.*;
+
+public class SemanticAnalyzerUtils {
+	
+	private static final Logger LOGGER = Logger.getLogger(SemanticAnalyzerUtils.class);
+	
+	/**
+	 * Logs semantic error to the standard output.
+	 * 
+	 * @param errorMessage Message to be logged
+	 * @param syntaxNode   Node visited when error was found
+	 */
+	public static void reportError(String errorMessage, SyntaxNode syntaxNode) {
+		final int line = syntaxNode != null ? syntaxNode.getLine() : 0;
+		LOGGER.error(String.format("%s at line %s.", line));
+	}
+	
+	/**
+	 * Opens scope for the object with the given kind, name and type.
+	 * 
+	 * @param scopeKind
+	 * @param scopeName
+	 * @param scopeType
+	 * @return Inserted object
+	 */
+	public static Obj openScope(int scopeKind, String scopeName, Struct scopeType) {
+		Obj scope = Tab.insert(scopeKind, scopeName, scopeType);
+		Tab.openScope();
+		
+		LOGGER.info("Open the [%s] scope.");
+		return scope;
+	}
+	
+	/**
+	 * Chains local symbols and closes the scope.
+	 * 
+	 * @param scopeObj  Scope to be closed
+	 * @param scopeName Scope name
+	 */
+	public static void closeScope(Obj scopeObj, String scopeName) {
+		Tab.chainLocalSymbols(scopeObj);
+		Tab.closeScope();
+		
+		LOGGER.info(String.format("Closed [%s] scope.", scopeName));
+	}
+	
+	/**
+	 * Search for the object with the given name in the symbol table.
+	 * 
+	 * @param object     Found object
+	 * @param objectName Expected object name
+	 * @return Found object
+	 */
+	public static Obj findObjectInTheSymbolTable(SyntaxNode object, String objectName) {
+		Obj foundObj = Tab.find(objectName);
+		
+		if (foundObj == Tab.noObj) {
+			reportError(String.format(NON_EXISTENT_OBJ_ERROR, objectName), object);
+		}
+		
+		return foundObj;
+	}
+	
+	/**
+	 * Inserts constant object to the symbol table. 
+	 * 
+	 * @param constType Constant Type
+	 * @param constVal  Constant Address
+	 * @param constName Constant Name
+	 * @return Inserted object
+	 */
+	public static Obj insertConstantToSymbolTable(Struct constType, ConstVal constVal, String constName) {
+		Obj constObj = Tab.insert(Obj.Con, constName, constType);
+		
+		if (constVal instanceof ConstValChar constValChar) {
+			constObj.setAdr(constValChar.getCharLiteral());
+		} else if (constVal instanceof ConstValBool constValBool) {
+			constObj.setAdr(constValBool.getBoolLiteral() ? 1 : 0);
+		} else if (constVal instanceof ConstValNumber constValNumber) {
+			constObj.setAdr(constValNumber.getNumberLiteral());
+		}
+		
+		return constObj;
+	}
+	
+	private SemanticAnalyzerUtils() {
+		// Private constructor for preventing utils class instantiation
+	}
+}

@@ -1,0 +1,103 @@
+package rs.ac.bg.etf.pp1;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+
+import java_cup.runtime.Symbol;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+
+import rs.ac.bg.etf.pp1.ast.ProgramDecl;
+import rs.ac.bg.etf.pp1.utils.Log4JUtils;
+import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
+
+import static rs.ac.bg.etf.pp1.SemanticAnalyzer.getSemanticAnalyzerInstance;
+import static rs.ac.bg.etf.pp1.CodeGenerator.getCodeGeneratorInstance;
+
+public class Compiler {
+
+	static {
+		DOMConfigurator.configure(Log4JUtils.instance().findLoggerConfigFile());
+		Log4JUtils.instance().prepareLogFile(Logger.getRootLogger());
+	}
+	
+	private static final Logger LOGGER = Logger.getLogger(Compiler.class);
+	
+	public static void main(String[] args) throws Exception {
+	
+		Reader br = null;
+		try {
+			
+			// Load source code
+			File sourceCode = new File("test/program.mj");
+			LOGGER.info("Compiling source file: " + sourceCode.getName());
+			
+			// Lexical analysis
+			br = new BufferedReader(new FileReader(sourceCode));
+			Yylex lexer = new Yylex(br);
+			
+			// Syntax analysis
+			LOGGER.info("\n\n\n====================================================================== Abstract Syntax Tree ======================================================================");
+			MJParser p = new MJParser(lexer);
+	        Symbol s = p.parse(); 
+	        
+	        
+	        ProgramDecl prog = (ProgramDecl)(s.value); 
+				        
+	        LOGGER.info(prog.toString(""));
+			LOGGER.info("===============================================================================================================================================================================\n\n\n");
+	        
+	        // Semantic analysis
+			
+			LOGGER.info("====================================================================== Semantic Analysis ======================================================================\n\n");
+			
+			SemanticAnalyzer semanticAnalyzer = getSemanticAnalyzerInstance();
+			prog.traverseBottomUp(semanticAnalyzer); 
+			
+			Tab.dump();
+			
+			if (semanticAnalyzer.isSemanticErrorFound()) {
+				LOGGER.error("The input code is not semanticly correct. Obj file cannot be generated.");
+				return;
+			}
+			
+			LOGGER.info("===============================================================================================================================================================================\n\n");
+			
+			// Code generation
+			
+			LOGGER.info("====================================================================== Code generation ======================================================================\n");
+			
+			
+			File objFile = new File("test/program.obj");
+			if(objFile.exists()) objFile.delete();
+			
+			CodeGenerator codeGenerator = getCodeGeneratorInstance();
+			Code.dataSize = semanticAnalyzer.getNVars();
+			
+			prog.traverseBottomUp(codeGenerator);
+			
+			System.out.println("\n\n");
+			
+			Code.mainPc = codeGenerator.getMainPC();
+			
+			Code.write(new FileOutputStream(objFile));
+			
+			Tab.dump();
+			
+			LOGGER.info("===============================================================================================================================================================================\n\n\n");
+			
+		} 
+		finally {
+			if (br != null) try { br.close(); } catch (IOException e1) { LOGGER.error(e1.getMessage(), e1); }
+		}
+
+	}
+	
+	
+}

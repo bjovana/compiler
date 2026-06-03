@@ -1,0 +1,742 @@
+package rs.ac.bg.etf.pp1;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+
+import static rs.ac.bg.etf.pp1.utils.CodeGeneratorUtils.*;
+
+public class CodeGenerator extends VisitorAdaptor {
+		
+	private int mainPC;
+	
+	private static CodeGenerator codeGeneratorInstance = null;
+		
+	private enum JumpKind {
+		TERNARY_OPERATOR,
+		IF_ELSE_STATEMENT,
+		FOR_LOOP
+	}
+	
+	private JumpKind jumpKind = null;
+		
+	/* <==================================== Jump Stacks ====================================> */
+	
+	private Stack<Integer> orRelopFalseJumps = new Stack<>();
+	private Stack<Integer> orRelopTrueJumps = new Stack<>();
+	
+	private Stack<Integer> andRelopFalseJumps = new Stack<>();
+	
+	private Stack<Integer> ternaryOperatorFalseJumps = new Stack<>();
+	private Stack<Integer> ternaryOperatorTrueJumps = new Stack<>();
+		
+	private Stack<Integer> switchCaseFalseJumps = new Stack<>();
+	private Stack<Integer> switchCaseTrueJumps = new Stack<>();
+	private Stack<Integer> switchBreakJumps = new Stack<>();
+	
+	private Stack<Integer> condFalseJumps = new Stack<>();
+	private Stack<Integer> condTrueJumps = new Stack<>();
+	
+	private Stack<Integer> forFalseJumps = new Stack<>();
+	private Stack<Integer> forStatementJumps = new Stack<>();
+	private Stack<Integer> forActionJumps = new Stack<>();
+	private Stack<Integer> forCondJumps = new Stack<>();
+	private Stack<Integer> forBreakJumps = new Stack<>();
+	private Stack<Integer> forContinueJumps = new Stack<>();
+	
+	private Map<String, Stack<Integer>> gotoJumpForward = new HashMap<>();
+	private Map<String, Integer> gotoLabelsAddresses = new HashMap<>();
+		
+	/* <========================================================= Code Generator Instantiation =========================================================> */
+	
+	public static CodeGenerator getCodeGeneratorInstance() {
+		if (codeGeneratorInstance == null) {
+			codeGeneratorInstance = new CodeGenerator();
+		}
+		
+		return codeGeneratorInstance;
+	}
+	
+	private CodeGenerator() {
+		// Private constructor for preventing instantiation of a Code Generator out of base class since the class should be unique for the whole project 
+
+		generateBuiltInsCode();
+	}
+	
+    /* <============================================================================================================================> */
+	/* <========================================================= Visitors =========================================================> */
+	
+	/* Main function visitors */
+	
+	public void visit(VoidMain voidMain) {
+				
+		// Defines entry point of our code
+		mainPC = Code.pc;
+		voidMain.obj.setAdr(Code.pc);
+		enterMethod(voidMain.getParent());
+	}
+
+	public void visit(MainFuncDecl mainFuncDecl) {
+		exitMethod();
+	}
+	
+	/* Main function visitors end*/
+	
+	/* Custom function visitors */
+	
+	public void visit(FunctionNonVoidType functionNonVoidType) {
+		functionNonVoidType.obj.setAdr(Code.pc);
+		enterMethod(functionNonVoidType.getParent());
+	}
+	
+	public void visit(FunctionVoidType functionVoidType) {
+		functionVoidType.obj.setAdr(Code.pc);
+		enterMethod(functionVoidType.getParent());
+	}
+	
+	public void visit(CustomFuncDecl customFuncDecl) {
+		exitMethod();
+	}
+	
+	/* Custom function visitors end */
+	
+	/* Designator visitors */
+	
+	/**
+	 * Loads array address on the stack so it can be used within {@code (b)aload} and {@code (b)astore} instructions.
+	 * Before this, index is loaded on the stack. Mentioned instructions expect the swapped order, so this function also sorts it out.
+	 * 
+	 * @param designatorDeclIdentArrayElemAccess Visited AST node
+	 */
+	public void visit(DesignatorDeclIdentArrayElemAccess designatorDeclIdentArrayElemAccess) {
+		Code.load(designatorDeclIdentArrayElemAccess.obj);
+		swap();
+	}
+	
+	/**
+	 * Resolves {@code length} instructions. Puts the array address on the stack.
+	 * 
+	 * @param designatorDeclIdentLength Visited AST node
+	 */
+	public void visit(DesignatorDeclIdentLength designatorDeclIdentLength) {
+		Code.load(designatorDeclIdentLength.obj);
+		Code.put(Code.arraylength);
+	}
+	
+	/* Designator visitors end */
+		
+	/* Designator statements visitors */
+	
+	public void visit(DesignatorStatementDeclAssignment designatorStatementDeclAssignment) {	
+				
+		if (designatorStatementDeclAssignment.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+				
+		Code.store(designatorStatementDeclAssignment.getDesignatorDecl().obj);
+		
+	}
+	
+	public void visit(DesignatorStatementDeclIncrement designatorStatementDeclIncrement) {
+						
+		final boolean isArrayElemAccess = designatorStatementDeclIncrement.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess;
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.dup2);
+			Code.put(Code.aload);
+		} else {
+			Code.load(designatorStatementDeclIncrement.getDesignatorDecl().obj);
+		}
+		
+		Code.loadConst(1);
+		Code.put(Code.add);
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclIncrement.getDesignatorDecl().obj);
+	}
+	
+	public void visit(DesignatorStatementDeclDecrement designatorStatementDeclDecrement) {
+						
+		final boolean isArrayElemAccess = designatorStatementDeclDecrement.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess;
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.dup2);
+			Code.put(Code.aload);
+		} else {
+			Code.load(designatorStatementDeclDecrement.getDesignatorDecl().obj);
+		}
+		
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclDecrement.getDesignatorDecl().obj);
+	}
+	
+	public void visit(DesignatorStatementDeclDoubleIncrement designatorStatementDeclDoubleIncrement) {
+		
+		final boolean isArrayElemAccess = designatorStatementDeclDoubleIncrement.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess;
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.dup2);
+			Code.put(Code.aload);
+		} else {
+			Code.load(designatorStatementDeclDoubleIncrement.getDesignatorDecl().obj);
+		}
+		
+		Code.loadConst(2);
+		Code.put(Code.add);
+		
+		if (isArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(designatorStatementDeclDoubleIncrement.getDesignatorDecl().obj);
+		
+	}
+	
+	public void visit(DesignatorStatementDeclFunction designatorStatementDeclFunction) {
+		Obj methodDesignator = designatorStatementDeclFunction.getDesignatorDecl().obj;
+			
+		Code.put(Code.call);
+		Code.put2(methodDesignator.getAdr() - Code.pc + 1);
+		
+		if (methodDesignator.getType() != Tab.nullType && methodDesignator.getType() != Tab.noType) {
+			Code.put(Code.pop);
+		}
+	}
+	
+	/* Designator statements visitors end */
+	
+	/* Statement visitors */
+	
+	public void visit(StatementDeclPrint statementDeclPrint) {
+		final int widht = statementDeclPrint.getPrintArgsDecl() instanceof PrintArgsDeclaration ? 
+																							((PrintArgsDeclaration) statementDeclPrint.getPrintArgsDecl()).getNumberLiteral() :
+																							statementDeclPrint.getExprDecl().struct == Tab.charType ? 1 : 5;
+		Code.loadConst(widht);
+		Code.put(statementDeclPrint.getExprDecl().struct == Tab.charType ? Code.bprint : Code.print);
+	}
+	
+	public void visit(StatementDeclRead statementDeclRead) {
+				
+		if (statementDeclRead.getDesignatorDecl().obj.getType().getKind() == Tab.charType.getKind()) {
+			Code.put(Code.bread);
+		} else {
+			Code.put(Code.read);
+		}
+		
+		if (statementDeclRead.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess) {
+			Code.put(Code.astore);
+			return;
+		}
+		
+		Code.store(statementDeclRead.getDesignatorDecl().obj);
+	}
+	
+	public void visit(StatementDeclReturn statementDeclReturn) {
+		exitMethod();
+	}
+	
+	/* Switch declarations */
+	
+	public void visit(Case caseDecl) {
+		
+		if (!switchCaseFalseJumps.empty()) {
+			Code.fixup(switchCaseFalseJumps.pop());
+		}
+		
+		Code.put(Code.dup);
+		Code.loadConst(caseDecl.getNumberLiteral());
+		Code.putFalseJump(Code.eq, 0);
+		
+		switchCaseFalseJumps.push(Code.pc - 2);
+		
+		if (!switchCaseTrueJumps.empty()) {
+			Code.fixup(switchCaseTrueJumps.pop());
+		}
+	}
+	
+	public void visit(SwitchOptionalStatementDeclarations optionalStatementDeclarations) {
+		Code.putJump(0);
+		switchCaseTrueJumps.push(Code.pc - 2);
+	}
+	
+	public void visit(StatementDeclSwitch statementDeclSwitch) {
+		Code.put(Code.pop);
+		
+		while (!switchCaseFalseJumps.empty()) {
+			Code.fixup(switchCaseFalseJumps.pop());
+		}
+		
+		while (!switchCaseTrueJumps.empty()) {
+			Code.fixup(switchCaseTrueJumps.pop());
+		}
+		
+		while (!switchBreakJumps.empty()) {
+			Code.fixup(switchBreakJumps.pop());
+		}
+	}
+	
+	/* Switch declarations end */
+	
+	/* If declarations */
+	
+	public void visit(CondStatementDeclarations condStatementDeclarations) {
+		
+		if (!(condStatementDeclarations.getParent() instanceof ElseDecl)) {
+			Code.putJump(0);
+			condTrueJumps.push(Code.pc - 2);
+			
+			if (!condFalseJumps.empty()) 
+				Code.fixup(condFalseJumps.pop());
+			
+			
+			while (!andRelopFalseJumps.empty()) {
+				Code.fixup(andRelopFalseJumps.pop());
+			}
+		}
+	}
+	
+	public void visit(CondStatementDeclaration condStatementDeclaration) {
+		
+		if (!(condStatementDeclaration.getParent() instanceof ElseDecl)) {
+			
+			Code.putJump(0);
+			condTrueJumps.push(Code.pc - 2);
+			
+			if (!condFalseJumps.empty()) 
+				Code.fixup(condFalseJumps.pop());
+			
+			
+			while (!andRelopFalseJumps.empty()) {
+				Code.fixup(andRelopFalseJumps.pop());
+			}
+		}
+	}
+		
+	public void visit(StatementDeclIf statementDeclIf) {
+		Code.fixup(condTrueJumps.pop());
+	}
+	
+	/* If declarations end */
+	
+	/* For statement declarations */
+	
+	public void visit(StatementDeclFor statementDeclFor) {
+		if (!forFalseJumps.empty()) {
+			Code.fixup(forFalseJumps.pop());
+		}
+		
+		while (!forBreakJumps.empty()) {
+			Code.fixup(forBreakJumps.pop());
+		}
+		
+		while (!andRelopFalseJumps.empty()) {
+			Code.fixup(andRelopFalseJumps.pop());
+		}
+	}
+	
+	public void visit(Lparen lparen) {
+		forCondJumps.push(Code.pc);
+	}
+	
+	public void visit(ForCondition forCondition) {
+		Code.putJump(0);
+		forStatementJumps.push(Code.pc - 2);
+	
+		forContinueJumps.push(Code.pc);
+		forActionJumps.push(Code.pc);
+	}
+	
+	public void visit(ForConditionEpsilon forConditionEpsilon) {
+		Code.putJump(0);
+		forStatementJumps.push(Code.pc - 2);
+		
+		forContinueJumps.push(Code.pc);
+		forActionJumps.push(Code.pc);
+	}
+	
+	public void visit(ForDesignator forDesignator) {
+		if (forDesignator.getParent() instanceof StatementDeclFor) {
+			Code.putJump(forCondJumps.pop());
+		}
+	}
+	
+	public void visit(ForDesignatorEpsilon forDesignatorEpsilon) {
+		if (forDesignatorEpsilon.getParent() instanceof StatementDeclFor) {
+			Code.putJump(forCondJumps.pop());
+		}
+	}
+	
+	public void visit(Rparen rparen) {
+		
+		while (!orRelopTrueJumps.empty())
+			Code.fixup(orRelopTrueJumps.pop());
+		
+		if (rparen.getParent() instanceof StatementDeclIf) {
+			return;
+		}
+		
+		Code.fixup(forStatementJumps.pop());
+	}
+	
+	public void visit(ForStatementDeclaration forStatementDeclaration) {
+		Code.putJump(forActionJumps.pop());
+	}
+	
+	public void visit(ForStatementDeclarations forStatementDeclarations) {
+		Code.putJump(forActionJumps.pop());
+	}
+	
+	/* For statement declarations end */
+	
+	/* Break and Continue declarations */
+	
+	public void visit(StatementDeclBreak statementDeclBreak) {
+		
+		SyntaxNode parent = statementDeclBreak.getParent();
+		
+		while (parent != null) {
+			
+			if (parent instanceof ForStatementDecl) {
+				Code.putJump(0);
+				forBreakJumps.push(Code.pc - 2);
+				return;
+			}
+
+			if (parent instanceof SwitchOptionalStatementDeclList) {
+				Code.putJump(0);
+				switchBreakJumps.push(Code.pc - 2);
+				return;
+			}
+			
+			parent = parent.getParent();
+		}
+			
+	}
+	
+	public void visit(StatementDeclContinue statementDeclContinue) {
+		Code.putJump(forContinueJumps.pop());
+	}
+	
+	/* Break and Continue declarations end */
+	
+	/* Statement visitors end */
+	
+	/* Factor visitors - LOAD OPERANDS TO STACK */
+	
+	public void visit(FactorDeclNumber factorDeclNumber) {
+		Code.loadConst(factorDeclNumber.getNumberLiteral());
+	}
+	
+	public void visit(FactorDeclChar factorDeclChar) {
+		Code.loadConst(factorDeclChar.getCharLiteral());
+	}
+	
+	public void visit(FactorDeclBool factorDeclBool) {
+		Code.loadConst(factorDeclBool.getBoolLiteral() ? 1 : 0);
+	}
+	
+	public void visit(FactorDeclDesignator factorDeclDesignator) {
+				
+		if (factorDeclDesignator.getDesignatorDecl() instanceof DesignatorDeclIdentLength) {
+			return;
+		}
+		
+		if (factorDeclDesignator.getDesignatorDecl() instanceof DesignatorDeclIdentArrayElemAccess) {
+			Code.put(Code.aload);
+			
+			return;
+		}
+		
+		// Load result for array@number operator 
+		if (factorDeclDesignator.getDesignatorDecl() instanceof DesignatorDeclDot) {
+			
+			DesignatorDeclDot designatorObj = (DesignatorDeclDot) factorDeclDesignator.getDesignatorDecl();
+			
+			Code.load(designatorObj.obj);
+			
+			Code.loadConst(designatorObj.getNumberLiteral());
+			
+			// Verify number literal is smaller than array size
+			Code.put(Code.dup);
+			
+			Code.load(designatorObj.obj);
+			Code.put(Code.arraylength);
+			
+			Code.putFalseJump(Code.gt, 0);
+			int fixup = Code.pc - 2;
+			Code.put(Code.trap);
+			
+			Code.fixup(fixup);
+			Code.put(Code.aload);
+			
+			Code.load(designatorObj.obj);
+			
+			// Stores array length on stack
+			Code.put(Code.dup);
+			Code.put(Code.arraylength);
+			
+			Code.loadConst(designatorObj.getNumberLiteral() + 1);
+			Code.put(Code.sub);
+			
+			// Verify it is valid index (greater than 0)
+			Code.put(Code.dup);
+			Code.loadConst(0);
+			Code.putFalseJump(Code.lt, 0);
+			fixup = Code.pc - 2;
+			Code.put(Code.trap);
+			
+			Code.fixup(fixup);
+			Code.put(Code.aload);
+			Code.put(Code.add);
+			
+			return;
+		}
+		
+		Code.load(factorDeclDesignator.getDesignatorDecl().obj);
+	}
+	
+	/**
+	 * Generates {@code newarray 1} (integer or boolean array) or {@code newarray 0} (char array) instruction.
+	 * Array size is already present on the expression stack.
+	 * 
+	 * @param factorDeclAllocationExpr Visited AST node
+	 */
+	public void visit(FactorDeclAllocationExpr factorDeclAllocationExpr) {
+	    
+		Code.put(Code.newarray);
+		
+		if (factorDeclAllocationExpr.getVarType().struct == Tab.charType) {
+	        Code.put(0);
+	        return;
+	    } 
+	        
+	    Code.put(1); 
+	}
+	
+	public void visit(FactorDeclFunctionCall factorDeclFunctionCall) {
+		Code.put(Code.call);
+		Code.put2(factorDeclFunctionCall.getDesignatorDecl().obj.getAdr() - Code.pc + 1);
+	}
+	
+	/* Factor visitors end */
+	
+	/* Term visitors - Put ADD and MUL operation */
+	
+	public void visit(TermDecl termDecl) {
+		if (termDecl.getParent() instanceof ExprDeclaration) {
+			ExprDeclaration exprDecl = (ExprDeclaration) termDecl.getParent(); 
+			if (exprDecl.getExprOptSignDecl() instanceof ExprOptSignDeclMinus) {
+				Code.put(Code.neg);
+			}
+		}
+	}
+	
+	public void visit(MulopFactorDeclarations mulopFactorDeclarations) {
+				
+		MulopDecl mulop = mulopFactorDeclarations.getMulopDecl();
+		
+		if (mulop instanceof MulopDeclMul) {
+			Code.put(Code.mul);
+		} else if (mulop instanceof MulopDeclDiv) {
+			Code.put(Code.div);
+		} else {
+			Code.put(Code.rem);
+		}
+	}
+	
+	public void visit(AddopTermDeclarations addopTermDeclarations) {		
+		
+		AddopDecl addop = addopTermDeclarations.getAddopDecl();
+		
+		if (addop instanceof AddopDeclPlus) {
+			Code.put(Code.add);
+		} else {
+			Code.put(Code.sub);
+		}
+	}
+	
+	/* Term visitors end */
+	
+	/* Expression visitors - Ternary operations and unary minus  */
+	
+	public void visit(Colon colon) {
+		
+		// Jump over else part
+		Code.putJump(0);
+		ternaryOperatorTrueJumps.push(Code.pc - 2);
+	
+		Code.fixup(ternaryOperatorFalseJumps.pop());
+		
+		while (!andRelopFalseJumps.empty())
+			Code.fixup(andRelopFalseJumps.pop());
+	}
+	
+	public void visit(Question question) {
+		while (!orRelopTrueJumps.empty()) {
+			Code.fixup(orRelopTrueJumps.pop());
+		}
+	}
+	
+	public void visit(ExprDeclarationTernaryOp exprlDeclarationTernaryOp) {
+		Code.fixup(ternaryOperatorTrueJumps.pop());
+	}
+	
+	/* Expression visitors end */
+	
+	
+	/* Condition visitors */
+	
+	public void visit(CondFactDecl condFactDecl) {
+		int relop;
+		
+		if (condFactDecl.getCondFactOptArgDecl().struct == Tab.nullType) {
+			Code.loadConst(1);
+			relop = Code.eq;
+		}
+		
+		else {
+			RelopDecl relopDecl = ((CondFactOptArgDeclaration) condFactDecl.getCondFactOptArgDecl()).getRelopDecl();
+			
+			if (relopDecl instanceof RelopDeclEQ) {
+				relop = Code.eq;
+			} else if (relopDecl instanceof RelopDeclNE) {
+				relop = Code.ne;
+			} else if (relopDecl instanceof RelopDeclGT) {
+				relop = Code.gt;
+			} else if (relopDecl instanceof RelopDeclGE) {
+				relop = Code.ge;
+			} else if (relopDecl instanceof RelopDeclLT) {
+				relop = Code.lt;
+			} else {
+				relop = Code.le;
+			}
+		}
+		
+		Code.putFalseJump(relop, 0);		
+		orRelopFalseJumps.push(Code.pc - 2);
+		andRelopFalseJumps.push(Code.pc - 2);
+		
+		SyntaxNode jump = condFactDecl.getParent();
+		
+		while (jump != null) {
+			
+			if (jump instanceof ExprDeclarationTernaryOp) {
+				ternaryOperatorFalseJumps.push(Code.pc - 2);
+				jumpKind = JumpKind.TERNARY_OPERATOR;
+				
+				break;
+			} 
+			
+			if (jump instanceof StatementDeclIf) {
+				condFalseJumps.push(Code.pc - 2);
+				jumpKind = JumpKind.IF_ELSE_STATEMENT;
+				
+				break;
+			}
+			
+			if (jump instanceof StatementDeclFor) {
+				forFalseJumps.push(Code.pc - 2);
+				jumpKind = JumpKind.FOR_LOOP;
+				
+				break;
+			}
+			
+			jump = jump.getParent();
+		}
+		
+	}
+	
+	public void visit(Or or) {
+		if (!orRelopFalseJumps.empty()) {
+			
+			while (!andRelopFalseJumps.empty()) {
+				Code.fixup(andRelopFalseJumps.pop());
+			}
+						
+			Code.putJump(0);
+			orRelopTrueJumps.push(Code.pc - 2);
+			
+			// Skip double address fixing
+			switch (jumpKind) {
+			
+			case TERNARY_OPERATOR:
+				ternaryOperatorFalseJumps.pop();
+				break;
+				
+			case IF_ELSE_STATEMENT:
+				condFalseJumps.pop();
+				break;
+				
+			case FOR_LOOP:
+				forFalseJumps.pop();
+				break;
+				
+			}
+			
+			Code.fixup(orRelopFalseJumps.pop());
+		}
+	}
+	
+	public void visit(And and) {
+		switch (jumpKind) {
+		
+		case TERNARY_OPERATOR:
+			ternaryOperatorFalseJumps.pop();
+			break;
+			
+		case IF_ELSE_STATEMENT:
+			condFalseJumps.pop();
+			break;
+			
+		case FOR_LOOP:
+			forFalseJumps.pop();
+			break;
+			
+		}
+	}
+
+	
+	public void visit(GotoStmt gotoStmt) {
+		
+		String label = gotoStmt.getLabelName();
+		
+		if (gotoJumpForward.get(label) != null) {
+			Stack<Integer> fixups = gotoJumpForward.get(label);
+			
+			while (!fixups.empty())
+				Code.fixup(fixups.pop());
+		}
+		
+		gotoLabelsAddresses.put(label, Code.pc);
+	}
+	
+	public void visit(ConditionDecl conditionDecl) {
+		jumpKind = null;
+	}
+			
+    /* <==================================================================================================================================> */
+	/* <========================================================= Helper methods =========================================================> */
+	
+	public int getMainPC() {
+		return mainPC;
+	}
+
+} 

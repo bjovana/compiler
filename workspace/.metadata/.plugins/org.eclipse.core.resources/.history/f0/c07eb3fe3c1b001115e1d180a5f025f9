@@ -1,0 +1,1662 @@
+package rs.ac.bg.etf.pp1;
+
+import org.apache.log4j.Logger;
+
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.symboltable.*;
+import rs.etf.pp1.symboltable.concepts.*;
+
+import static rs.ac.bg.etf.pp1.constants.ErrorConstants.*;
+import static rs.ac.bg.etf.pp1.constants.Constants.*;
+import static rs.ac.bg.etf.pp1.utils.SemanticAnalyzerUtils.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SemanticAnalyzer extends VisitorAdaptor {
+
+	private static final Logger LOGGER = Logger.getLogger(SemanticAnalyzer.class);
+
+	private final Struct boolType;
+	private Struct currentConstType, currentVarType;
+
+	private boolean semanticErrorFound = false;
+	
+	// Used for validations and preventing multiple error reports
+	// <========== DON'T FORGET TO RESET WHEN VISITING THE FINAL RULE NODE! ==========> //
+	
+	private boolean invalidVarType = false, duplicateSwitchCase = false;
+
+	private List<Integer> switchStateCurrentCases = new ArrayList<>();
+	private List<Struct> currentFunctionCallParamTypes = new ArrayList<Struct>(); 
+	
+	private int currentParamIndex = 0;
+	private int nVars;
+	
+	private List<Struct> currentReturnTypes = new ArrayList<>();
+	
+	private boolean safeReturnPresent = false;
+	
+	// <==============================================================================> //
+	
+	// Used for validating enum values //
+	// <========== DON'T FORGET TO RESET WHEN VISITING THE FINAL RULE NODE! ==========> //
+	
+	private int enumCounter = 1;
+	private List<Integer> presentEnumValues = new ArrayList<>();
+	
+	// <==============================================================================> //
+	
+	private static SemanticAnalyzer semanticAnalyzer = null;
+	
+	/**
+	 * Creates Semantic Analyzer instance. Since semantic analyzer is unique for the whole project, so
+	 * its constructor has to be private.
+	 *
+	 * <p>
+	 * Initializes the symbol table and registers the built-in boolean type. 
+	 * </p>
+	 */
+	private SemanticAnalyzer() {
+		Tab.init();
+
+		boolType = new Struct(Struct.Bool);
+		Tab.insert(Obj.Type, "bool", boolType);
+
+		LOGGER.info("Initialized a Symbol Table.");
+	}
+		
+	/**
+	 * Instantiate semantic analyzer instance if one doesn't exist and returns it.
+	 * 
+	 * @return Semantic Analyze instance
+	 */
+	public static SemanticAnalyzer getSemanticAnalyzerInstance() {
+		
+		if (semanticAnalyzer == null) {
+			semanticAnalyzer = new SemanticAnalyzer();
+		}
+		
+		return semanticAnalyzer;
+	}
+	
+
+	/* <========================================================= Program Declaration =========================================================> */
+
+	/**
+	 * Processes program name declaration.
+	 *
+	 * <p>
+	 * Creates program object in the symbol table and opens global scope.
+	 * </p>
+	 *
+	 * @param programNameDecl visited AST node
+	 */
+	public void visit(ProgramNameDecl programNameDecl) {
+		programNameDecl.obj = openScope(Obj.Prog, programNameDecl.getProgramName(), Tab.noType);
+	}
+
+	/**
+	 * Handles program declaration node.
+	 *
+	 * <p>
+	 * Links local symbols to the program object and closes the global scope.
+	 * </p>
+	 *
+	 * @param programDecl visited AST node
+	 */
+
+	public void visit(ProgramDecl programDecl) {
+		nVars = Tab.currentScope.getnVars();
+		closeScope(programDecl.getProgramNameDecl().obj, programDecl.getProgramNameDecl().getProgramName());
+		System.out.println("\n\n\n");
+	}
+	
+	/* <=========================================================================================================================================> */
+	/* <========================================================= Constants Declaration =========================================================> */
+
+	public void visit(ConstTypeBool constTypeBool) {
+		constTypeBool.struct = boolType;
+		currentConstType = boolType;
+	}
+
+	public void visit(ConstTypeChar constTypeChar) {
+		constTypeChar.struct = Tab.charType;
+		currentConstType = Tab.charType;
+	}
+
+	public void visit(ConstTypeInt constTypeInt) {
+		constTypeInt.struct = Tab.intType;
+		currentConstType = Tab.intType;
+	}
+
+	/**
+	 * Resolves user-defined constant type.
+	 *
+	 * <p>
+	 * Checks whether the provided identifier exists and represents a valid type. If valid, assigns it to the node; otherwise reports an error.
+	 * </p>
+	 *
+	 * @param constTypeIdent visited AST node
+	 */
+	public void visit(ConstTypeIdent constTypeIdent) {
+
+		// Type validations
+		Obj typeNode = validateObjectType(constTypeIdent, constTypeIdent.getTypeName());
+
+		// Invalid type
+		if (typeNode == Tab.noObj) {
+			constTypeIdent.struct = Tab.noType;
+			currentConstType = Tab.noType;
+			semanticErrorFound = true;
+			return;
+		}
+		
+		constTypeIdent.struct = typeNode.getType();
+		currentConstType = typeNode.getType();
+	}
+
+	public void visit(ConstValBool constValBool) {
+		constValBool.struct = boolType;
+	}
+
+	public void visit(ConstValChar constValChar) {
+		constValChar.struct = Tab.charType;
+	}
+
+	public void visit(ConstValNumber constValNumber) {
+		constValNumber.struct = Tab.intType;
+	}
+
+	/**
+	 * Processes additional constant declaration in a list.
+	 *
+	 * <p>
+	 * Checks type compatibility, verifies name uniqueness, inserts constant into symbol table and assigns literal value.
+	 * </p>
+	 *
+	 * @param constDeclarationMul visited AST node
+	 */
+	public void visit(ConstDeclarationMul constDeclarationMul) {
+
+		// Check if constant type matches the assigned value
+		if (!typesAssignable(constDeclarationMul, constDeclarationMul.getConstVal().struct, currentConstType, UNALLOWED_VALUE_ASSIGNED_TO_CONST_ERROR)) {
+			semanticErrorFound = true;
+			return;
+		}
+
+		// Check if the constant name already exists
+		String constName = constDeclarationMul.getConstName();
+
+		if (doesNameExists(constDeclarationMul, constName)) {
+			semanticErrorFound = true;
+			return;
+		}
+
+		// Insert constant to a table
+		constDeclarationMul.obj = insertConstantToSymbolTable(currentConstType, constDeclarationMul.getConstVal(), constName);
+	}
+
+	/**
+	 * Processes single constant declaration.
+	 *
+	 * <p>
+	 * Validates assigned value type, checks for duplicate names, inserts constant into symbol table and stores its literal value.
+	 * </p>
+	 *
+	 * @param constDecl visited AST node
+	 */
+	public void visit(ConstDecl constDecl) {
+
+		// Check if constant type matches the assigned value
+		if (!typesAssignable(constDecl, constDecl.getConstVal().struct, constDecl.getConstType().struct, UNALLOWED_VALUE_ASSIGNED_TO_CONST_ERROR)) {
+			semanticErrorFound = true;
+			return;
+		}
+		
+		// Check if the constant name already exists
+		String constName = constDecl.getConstName();
+
+		if (doesNameExists(constDecl, constName)) {
+			semanticErrorFound = true;
+			return;
+		}
+
+		// Insert constant to a table
+		constDecl.obj = insertConstantToSymbolTable(constDecl.getConstType().struct, constDecl.getConstVal(), constName);
+		
+		// This is needed in order to prevent current constant type leak to the next analyze cycles
+		currentConstType = null;
+	}
+
+	/* <=========================================================================================================================================> */
+	/* <========================================================= Variable declarations =========================================================> */
+
+	public void visit(VarTypeInt varTypeInt) { 
+		varTypeInt.struct = Tab.intType;
+		currentVarType = Tab.intType;
+	}
+	
+	public void visit(VarTypeChar varTypeChar) { 
+		varTypeChar.struct = Tab.charType;
+		currentVarType = Tab.charType;
+	}
+	
+	public void visit(VarTypeBool varTypeBool) { 
+		varTypeBool.struct = boolType;
+		currentVarType = boolType;
+	}
+	
+	/**
+	 * Process custom variable type declaration.
+	 * 
+	 * <p>
+	 * Checks whether declared type exists. If exists, checks whether found object is stored as type kind in the symbol table. 
+	 * If not, reports error. 
+	 * </p>
+	 * 
+	 * @param varTypeIdent Visited AST node
+	 */
+	public void visit(VarTypeIdent varTypeIdent) { 
+				
+		// Type validations
+		Obj obj = validateObjectType(varTypeIdent, varTypeIdent.getTypeName());
+		
+		// Invalid type
+		if (obj == Tab.noObj) {
+			varTypeIdent.struct = Tab.noType;
+			currentVarType = Tab.noType;
+			invalidVarType = true;
+			semanticErrorFound = true;
+			
+			return;
+		}
+	
+		varTypeIdent.struct = obj.getType();
+		currentVarType = obj.getType();
+	}
+	
+	/* Array variables declaration */
+	
+	public void visit(VarArrayDeclaration varArrayDeclaration) { 
+		varArrayDeclaration.struct = new Struct(Struct.Array, currentVarType);
+	}
+	
+	public void visit(VarArrayDeclarationEpsilon varArrayDeclarationEpsilon) { 
+		varArrayDeclarationEpsilon.struct = Tab.nullType;
+	}
+	
+	/* Array variables declaration end */
+	
+	public void visit(SingleVarIdDecl singleVarIdDecl) { 
+		addVariableOrParamToTheSymbolTable(singleVarIdDecl.getVarName(), singleVarIdDecl.getVarArrayDecl().struct, VARIABLE_INSERTION, singleVarIdDecl);
+	}
+	
+    public void visit(MultiVarIdDecl multiVarIdDecl) {
+    	addVariableOrParamToTheSymbolTable(multiVarIdDecl.getVarName(), multiVarIdDecl.getVarArrayDecl().struct, VARIABLE_INSERTION, multiVarIdDecl);
+    }
+	
+    public void visit(VarDecl varDecl) { 
+    	invalidVarType = false;
+    	currentVarType = Tab.noType;
+    }
+
+    /* <===========================================================================================================================================> */
+	/* <========================================================= Enum declarations ===============================================================> */
+    
+    /**
+     * Defines new enum scope if declared enum name is unique.
+     * 
+     * @param enumName Visited AST node
+     */
+    public void visit(EnumName enumName) {
+    	String name = enumName.getEnumName();
+    	
+    	// Check if the name is unique
+    	if (doesNameExists(enumName, name)) {
+    		enumName.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	// Define enum scope
+    	enumName.obj = openScope(Obj.Type, name, Tab.intType);
+    }
+    
+    /**
+     * If enum item name and value are unique, stores enum item in the current scope.
+     * 
+     * @param enumItem Visited AST node
+     */
+    public void visit(EnumItem enumItem) {
+    	String itemName = enumItem.getEnumItemName();
+    	
+    	// Check if the name is unique
+    	if (doesNameExists(enumItem, itemName)) {
+    		enumItem.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	// If the enum value is not unique, reports error
+    	if (enumItem.getEnumItemAssignValue() instanceof EnumValue) {
+    		EnumValue enumValue = (EnumValue) enumItem.getEnumItemAssignValue();
+    		enumCounter = enumValue.getNumberLiteral();
+    		
+    		if (presentEnumValues.contains(enumCounter)) {
+    			
+    			enumItem.obj = Tab.noObj;
+    			
+    			semanticErrorFound = true;
+    			reportError(DOUBLE_ENUM_VALUE_ERROR, enumItem);
+    			
+    			return;
+    		}
+    	}
+    	
+    	enumItem.obj = Tab.insert(Obj.Con, itemName, Tab.intType);
+    	enumItem.obj.setAdr(enumCounter++);
+    	
+    	LOGGER.info(String.format("New enum item [%s] with [%s] value added to the symbol table.", itemName, enumCounter - 1));
+    }
+    
+    /**
+     * Closes enum scope and chains its locals.
+     * 
+     * @param enumDecl Visited AST node
+     */
+    public void visit(EnumDecl enumDecl) {
+    	
+    	// Errors reported during enum name declaration node visit - Scope is not opened
+    	if (enumDecl.getEnumName().obj == Tab.noObj) {
+    		return;
+    	}
+    	    	
+    	closeScope(enumDecl.getEnumName().obj, enumDecl.getEnumName().getEnumName());
+        
+        // Reset flags for the next enum declaration
+        enumCounter = 1;
+        presentEnumValues.clear();    
+    }
+    
+    /* <==============================================================================================================================================> */
+	/* <========================================================= Method params declarations =========================================================> */
+    
+    public void visit(MethodParamDecl methodParamDecl) { 
+    	currentVarType = methodParamDecl.getVarType().struct;
+    	addVariableOrParamToTheSymbolTable(methodParamDecl.getParamName(), methodParamDecl.getVarArrayDecl().struct, PARAM_INSERTION, methodParamDecl);
+    	
+    	invalidVarType = false;
+    	currentVarType = Tab.noType;
+    }
+    
+    public void visit(MethodParamsDecl methodParamsDecl) { 
+    	currentVarType  = methodParamsDecl.getVarType().struct;
+    	addVariableOrParamToTheSymbolTable(methodParamsDecl.getParamName(), methodParamsDecl.getVarArrayDecl().struct, PARAM_INSERTION, methodParamsDecl);
+    	
+    	invalidVarType = false;
+    	currentVarType = Tab.noType;
+    }
+    
+    /* <==============================================================================================================================================> */
+	/* <========================================================= Main function declarations =========================================================> */
+    
+	/**
+	 * Opens main function scope or reports error if scope already exists.
+	 * 
+	 * @param voidMain visited AST node
+	 */
+    public void visit(VoidMain voidMain) {
+    	if (doesNameExists(voidMain, MAIN_SCOPE_NAME)) {
+    		voidMain.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	// Define main scope
+    	voidMain.obj = openScope(Obj.Meth, MAIN_SCOPE_NAME, Tab.noType);    	
+    	currentParamIndex = 0;
+    }
+    
+    /**
+     * Handles main function.
+     * 
+	 * <p>
+	 * Links local symbols to the main object and closes the scope.
+	 * </p>
+	 * 
+	 * @param mainFuncDecl visited AST node
+     */
+    public void visit(MainFuncDecl mainFuncDecl) { 
+    	
+    	safeReturnPresent = false;
+    	
+    	// Errors reported during opening main scope
+    	// If the error is reported, main scope is not opened 
+    	if (mainFuncDecl.getVoidMain().obj == Tab.noObj) {
+    		currentReturnTypes.clear();
+    		return;
+    	}
+    	
+    	// Ensure that if return statement is present, expression declaration part is no type
+    	for (Struct returnType : currentReturnTypes) {
+        	if (returnType != Tab.noType && returnType != Tab.nullType) {
+        		currentReturnTypes.clear();
+        		
+        		mainFuncDecl.getVoidMain().obj = Tab.noObj;
+        		
+        		reportError(INVALID_RETURN_TYPE_ERROR, mainFuncDecl);
+        		semanticErrorFound = true;
+        		
+        		return;
+        	}
+    	}
+
+    	
+        Obj mainObj = mainFuncDecl.getVoidMain().obj;
+
+        mainObj.setLevel(currentParamIndex);
+        LOGGER.info(String.format("[%s] scope level: ", MAIN_SCOPE_NAME) + currentParamIndex);
+
+        currentReturnTypes.clear();
+        
+        closeScope(mainObj, MAIN_SCOPE_NAME);
+    }
+
+    /* <=================================================================================================================================================> */
+	/* <========================================================= Custom functions declarations =========================================================> */
+    
+    /**
+     * Opens new scope for declared function name, if the name is unique. Otherwise, throws error.
+     * 
+     * @param functionNonVoidType Visited AST Node
+     */
+    public void visit(FunctionNonVoidType functionNonVoidType) {
+    	
+    	// Check if the name is declared in the current scope
+    	if (doesNameExists(functionNonVoidType, functionNonVoidType.getFunctionName())) {
+    		functionNonVoidType.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	// Define non void function scope
+    	functionNonVoidType.obj = openScope(Obj.Meth, functionNonVoidType.getFunctionName(), functionNonVoidType.getVarType().struct);
+    	currentParamIndex = 0;    	
+    } 
+    
+    /**
+     * Opens new scope for declared function name, if the name is unique. Otherwise, throws error.
+     * 
+     * @param functionVoidType Visited AST Node
+     */
+    public void visit(FunctionVoidType functionVoidType) {
+    	
+    	// Throws error if function name already exists
+    	if (doesNameExists(functionVoidType, functionVoidType.getFunctionName())) {
+    		functionVoidType.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	// Define void function scope
+    	functionVoidType.obj = openScope(Obj.Meth, functionVoidType.getFunctionName(), Tab.noType);
+    	currentParamIndex = 0;    	
+    }
+    
+    /**
+     * Closes the scope of the custom function.
+     * 
+     * @param customFuncDecl Visited AST node
+     */
+    public void visit(CustomFuncDecl customFuncDecl) {
+    	
+    	// Errors reported during opening custom function scope
+    	// If the error is reported, no scopes will be open
+    	if (customFuncDecl.getFunctionType().obj == Tab.noObj) {
+    		safeReturnPresent = false;
+    		currentReturnTypes.clear();
+    		return;
+    	}
+    	
+    	String functionName;
+    	
+    	// Ensure that function has return type if non void
+    	if (customFuncDecl.getFunctionType() instanceof FunctionNonVoidType) {
+    		
+    		FunctionNonVoidType functionNonVoidType = (FunctionNonVoidType) customFuncDecl.getFunctionType();
+    		
+    		if (currentReturnTypes.isEmpty()) {
+				safeReturnPresent = false;
+				
+    			reportError(MISSING_RETURN_STATEMENT_NON_VOID_FUNCTION_ERROR, customFuncDecl);
+    			semanticErrorFound = true;
+    			
+    			return;
+    		}
+    		
+    		for (Struct returnType : currentReturnTypes) {
+    			
+        		if (!returnType.assignableTo(functionNonVoidType.getVarType().struct)) {
+        			safeReturnPresent = false;
+        			currentReturnTypes.clear();
+        			
+        			reportError(INVALID_RETURN_TYPE_ERROR, customFuncDecl);
+            		semanticErrorFound = true;
+            		
+            		return;
+        		}
+    			
+    		}
+    		    		
+    		if (!safeReturnPresent) {
+    			safeReturnPresent = false;
+    			currentReturnTypes.clear();
+    			
+    			reportError(MISING_SAFE_RETURN_STATEMENT_NON_VOID_FUNCTION_ERROR, customFuncDecl);
+    			semanticErrorFound = true;
+    			
+    			return;
+    		}
+    		
+    		functionName = functionNonVoidType.getFunctionName();
+    	}
+    	
+    	// If the function type is void and return is present, ensure expression declaration is null
+    	else {
+    		for (Struct returnType : currentReturnTypes) {
+        		if (returnType != Tab.noType && returnType != Tab.nullType) {
+        			safeReturnPresent = false;
+        			currentReturnTypes.clear();
+        			reportError(INVALID_RETURN_TYPE_ERROR, customFuncDecl);
+            		semanticErrorFound = true;
+            		return;
+        		}
+    		}
+    		
+    		functionName = ((FunctionVoidType) customFuncDecl.getFunctionType()).getFunctionName();
+    	}
+    	
+    	// Close the function scope
+    	Obj functionObj = customFuncDecl.getFunctionType().obj;
+
+        functionObj.setLevel(currentParamIndex);
+        LOGGER.info(String.format("[%s] scope level: ", functionName) + currentParamIndex);
+
+        currentReturnTypes.clear();
+        safeReturnPresent = false;
+        
+        closeScope(functionObj, functionName);    	
+    }
+    
+    /* <==========================================================================================================================================> */
+	/* <========================================================= Statement declarations =========================================================> */
+    
+    /**
+     * Resolves read function call that can be called only for <b>basic type variables</b>.
+     * 
+     * @param statementDeclRead Visited AST node
+     */
+    public void visit(StatementDeclRead statementDeclRead) { 
+    	
+    	Obj designatorObj = statementDeclRead.getDesignatorDecl().obj;
+    	
+    	// Errors reported during designator node visit
+    	if (designatorObj == Tab.noObj || designatorObj == null) {
+    		statementDeclRead.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Check kind of the designator
+    	if (designatorObj.getKind() != Obj.Var && designatorObj.getKind() != Obj.Elem) {
+    		statementDeclRead.obj = Tab.noObj;
+    		
+    		reportError(READ_NON_VAR_TYPES_ERROR, statementDeclRead);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	// Check if designator is basic type
+    	int typeKind = designatorObj.getType().getKind();
+    	
+    	if (typeKind != Struct.Int && typeKind != Struct.Char && typeKind != Struct.Bool) {
+    		statementDeclRead.obj = Tab.noObj;
+    		
+    		reportError(READ_INVALID_ARGUMENTS_TYPE_ERROR, statementDeclRead);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	statementDeclRead.obj = designatorObj;
+    }
+    
+    /**
+     * Resolves print function that can be called only for <b>basic types</b>.
+     * 
+     * @param statementDeclPrint Visited AST node
+     */
+    public void visit(StatementDeclPrint statementDeclPrint) { 
+    	
+    	// Errors reported during visiting expression AST node
+    	if (statementDeclPrint.getExprDecl().struct == Tab.noType) {
+    		statementDeclPrint.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	int typeKind = statementDeclPrint.getExprDecl().struct.getKind();
+    	
+    	if (typeKind != Struct.Int && typeKind != Struct.Char && typeKind != Struct.Bool) {
+    		statementDeclPrint.obj = Tab.noObj;
+    		
+    		reportError(PRINT_ARGUMENT_ERROR, statementDeclPrint);
+    		semanticErrorFound = true;
+    	}
+    	
+    }
+    
+    /* Designator statements declaration */
+    
+    /**
+     * Resolves assignment expressions. Left and right sides of equal sign must be the same type.
+     * 
+     *  @param designatorStatementDeclAssignment Visited AST node
+     */
+    public void visit(DesignatorStatementDeclAssignment designatorStatementDeclAssignment) { 
+    	
+    	Obj designatorObj = designatorStatementDeclAssignment.getDesignatorDecl().obj;
+    	Struct exprType = designatorStatementDeclAssignment.getExprDecl().struct;
+    	
+    	// Errors reported during visiting expression and designator AST nodes
+    	if (designatorObj == Tab.noObj || exprType == Tab.noType) {
+    		designatorStatementDeclAssignment.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Unallowed constant assignments
+    	if (designatorStatementDeclAssignment.getDesignatorDecl().obj.getKind() == Obj.Con) {
+    		designatorStatementDeclAssignment.obj = Tab.noObj;
+    		
+    		reportError(ILLEGAL_CONST_ASSIGNMENT_ERROR, designatorStatementDeclAssignment);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	 
+    	// Check if types match
+    	if (!typesAssignable(designatorStatementDeclAssignment, designatorObj.getType(), exprType, INVALID_ASSIGNMENT_TYPE_ERROR)) {
+    		designatorStatementDeclAssignment.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	
+    	designatorStatementDeclAssignment.obj = designatorObj;
+    }
+    
+    /**
+     * Resolves objects increment. Can be called only for integer variables.
+     * 
+     * 
+     * @param designatorStatementDeclIncrement Visited AST node
+     */
+    public void visit(DesignatorStatementDeclIncrement designatorStatementDeclIncrement) { 
+    	
+    	Obj designatorObj = designatorStatementDeclIncrement.getDesignatorDecl().obj;
+    	
+    	// Errors reported during designator node visit
+    	if (designatorObj == Tab.noObj) {
+    		designatorStatementDeclIncrement.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Validate incrementing operation
+    	if (!validIncrDectOperation(designatorStatementDeclIncrement, designatorObj.getKind(), designatorObj.getType(), "Incrementing")) {
+    		designatorStatementDeclIncrement.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	    	
+    	designatorStatementDeclIncrement.obj = designatorObj;
+    }
+
+    /**
+     * Resolves objects decrement. Can be called only for integer variables.
+     * 
+     * @param designatorStatementDeclDecrement Visited AST node
+     */
+    public void visit(DesignatorStatementDeclDecrement designatorStatementDeclDecrement) { 
+    	
+    	Obj designatorObj = designatorStatementDeclDecrement.getDesignatorDecl().obj;
+    	
+    	// Non existent or invalid errors that are reported during designator node visit
+    	if (designatorObj == Tab.noObj || designatorObj == null) {
+    		designatorStatementDeclDecrement.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Validate decrement operation
+    	if (!validIncrDectOperation(designatorStatementDeclDecrement, designatorObj.getKind(), designatorObj.getType(), "Decrementing")) {
+    		designatorStatementDeclDecrement.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	
+    	designatorStatementDeclDecrement.obj = designatorObj;
+    }
+    
+    /**
+     * Resolves function calls. Sent parameters must match function type. If function is non void, at least one safe return must be present.
+     * 
+     * @param designatorStatementDeclFunction Visited AST node
+     */
+    public void visit(DesignatorStatementDeclFunction designatorStatementDeclFunction) { 
+
+    	Obj methodObj = designatorStatementDeclFunction.getDesignatorDecl().obj;
+    	    	
+    	// Errors reported during designator node visit
+    	if (methodObj == Tab.noObj) {
+    		currentFunctionCallParamTypes.clear();
+    		designatorStatementDeclFunction.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Ensures that function call is valid
+    	if (!validFunctionCall(designatorStatementDeclFunction, methodObj, currentFunctionCallParamTypes.size())) {
+    		currentFunctionCallParamTypes.clear();
+    		designatorStatementDeclFunction.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	   	    
+    	// Validates argument types match the function declared parameters
+    	if (!validateFunctionCallArguments(designatorStatementDeclFunction, methodObj, currentFunctionCallParamTypes)) {
+    		currentFunctionCallParamTypes.clear();
+    		designatorStatementDeclFunction.obj = Tab.noObj;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	
+    	currentFunctionCallParamTypes.clear();
+    	designatorStatementDeclFunction.obj = methodObj;    	
+    }
+        
+    /* Designator statements declaration end */
+    
+    /* Switch statements declaration */
+    
+    /**
+     * Resolves switch statement options. 
+     * 
+     * @param switchOptionalStatementDeclarations Visited AST node
+     */
+    public void visit(SwitchOptionalStatementDeclarations switchOptionalStatementDeclarations) {
+    	
+    	safeReturnPresent = false;
+    	
+    	if (duplicateSwitchCase) {
+    		return;
+    	}
+    	
+    	if (switchStateCurrentCases.contains(switchOptionalStatementDeclarations.getCase().getNumberLiteral())) {
+    		switchOptionalStatementDeclarations.obj = Tab.noObj;
+    		duplicateSwitchCase = true;
+    		return;
+    	}
+    	
+    	switchStateCurrentCases.add(switchOptionalStatementDeclarations.getCase().getNumberLiteral());
+    	switchOptionalStatementDeclarations.obj = new Obj(Obj.Con, "SWITCH CASE", Tab.intType);
+    }
+    
+    /**
+     * Resolves switch case statement. Reports error if there are multiple options with the same value or if the option type is not int.
+     * 
+     * @param statementDeclSwitch Visited AST node
+     */
+    public void visit(StatementDeclSwitch statementDeclSwitch) {
+    	    	
+    	// Duplicate cases check
+    	if (duplicateSwitchCase) {
+    		statementDeclSwitch.obj = Tab.noObj;
+    		
+    		reportError(SWITCH_DUPLICATE_CASES_ERROR, statementDeclSwitch);
+    		semanticErrorFound = true;
+    		
+    		// Reset error flags for the next switch statement
+    		duplicateSwitchCase = false;
+    		switchStateCurrentCases.clear();
+    		
+    		return;
+    	}
+    	
+    	// Expression type error
+    	if (statementDeclSwitch.getExprDecl().struct.getKind() != Struct.Int) {
+    		statementDeclSwitch.obj = Tab.noObj;
+    		
+    		reportError(SWITCH_EXPRESSION_INALID_TYPE_ERROR, statementDeclSwitch);
+    		semanticErrorFound = true;
+    		
+    		// Reset error flags for the next switch statement
+    		duplicateSwitchCase = false;
+    		switchStateCurrentCases.clear();
+    		
+    		return;
+    	}
+    	
+		// Reset error flags for the next switch statement
+		duplicateSwitchCase = false;
+		switchStateCurrentCases.clear();
+		
+		statementDeclSwitch.obj = new Obj(Obj.Con, "SWITCH STATEMENT", Tab.intType);
+    	
+    }
+    
+    /* Switch statements declaration end */
+    
+    /* Return statements declaration */
+    
+    public void visit(ReturnOptExpression returnOptExpression) {
+    	returnOptExpression.struct = returnOptExpression.getExprDecl().struct;
+    }
+    
+    public void visit(ReturnOptExpressionEpsilon returnOptExpressionEpsilon) {
+    	returnOptExpressionEpsilon.struct = Tab.nullType;
+    }
+    
+    public void visit(StatementDeclReturn statementDeclReturn) {
+    	safeReturnPresent = true;    	
+    	currentReturnTypes.add(statementDeclReturn.getReturnOptExpr().struct);
+    }
+    
+    /* Return statements declaration end */
+    
+    public void visit(StatementDeclIf statementDeclIf) {
+    	
+    	// Error reported during visiting condition node
+    	if (statementDeclIf.getConditionDecl().struct == Tab.noType) {
+    		statementDeclIf.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	statementDeclIf.obj = new Obj(Obj.Con, "SWITCH STATEMENT", boolType);
+    }
+    
+    /* For Statement Declarations */
+    
+    public void visit(ForDesignator forDesignator) {
+    	forDesignator.struct = forDesignator.getDesignatorStatementDecl().obj.getType();
+    }
+    
+    public void visit(ForDesignatorEpsilon forDesignatorEpsilon) {
+    	forDesignatorEpsilon.struct = Tab.nullType;
+    }
+    
+    public void visit(ForCondition forCondition) {
+    	forCondition.struct = forCondition.getConditionDecl().struct;
+    }
+    
+    public void visit(ForConditionEpsilon forConditionEpsilon) {
+    	forConditionEpsilon.struct = Tab.nullType;
+    }
+    
+    public void visit(StatementDeclFor statementDeclFor) {
+    	
+    	// Error reported during visiting condition node
+    	if (statementDeclFor.getForDesignatorOpt().struct == Tab.noType ||
+    		statementDeclFor.getLparen().getForDesignatorOpt().struct == Tab.noType ||
+    		statementDeclFor.getForConditionOpt().struct == Tab.noType) {
+    		return;
+    	}
+    	
+    	statementDeclFor.obj = new Obj(Obj.Con, "FOR STATEMENT", Tab.noType);
+    }
+    
+    /**
+     * Resolves continue statement that can be called only within for loop.
+     * 
+     * @param statementDeclContinue Visited AST node
+     */
+    public void visit(StatementDeclContinue statementDeclContinue) {
+    	
+    	SyntaxNode parent = statementDeclContinue.getParent();
+    	
+    	while (parent != null && !(parent instanceof ForStatementDecl)) {
+    		parent = parent.getParent();
+    	}
+    	
+    	if (parent == null) {
+    		statementDeclContinue.obj = Tab.noObj;
+    		
+    		semanticErrorFound = true;
+    		reportError(UNALLOWED_CONTINUE_CALL_ERROR, statementDeclContinue);
+    		
+    		return;
+    	}
+    	
+    	statementDeclContinue.obj = new Obj(Obj.Con, "CONTINUE STATEMENT", Tab.noType);
+    }
+    
+    /* For Statement Declarations end */
+    
+    /**
+     * Resolves break statement that can be called only within switch statement or for loop.
+     * 
+     * @param statementDeclBreak Visited AST node.
+     */
+    public void visit(StatementDeclBreak statementDeclBreak) {
+    	
+    	SyntaxNode parent = statementDeclBreak.getParent();
+    	
+    	while (parent != null && 
+    		  !(parent instanceof ForStatementDecl) && 
+    	      !(parent instanceof SwitchOptionalStatementDeclList)) {
+    		
+    		parent = parent.getParent();
+    	}
+    	
+    	if (parent == null) {
+    		
+    		statementDeclBreak.obj = Tab.noObj;
+    		
+    		reportError(UNALLOWED_BREAK_CALL_ERROR, statementDeclBreak);
+    		semanticErrorFound = true;
+    	}
+    	
+    	statementDeclBreak.obj = new Obj(Obj.Con, "BREAK STATEMENT", Tab.noType);
+    }
+    
+    /* <===========================================================================================================================================> */
+	/* <========================================================= Designator declarations =========================================================> */
+    
+    /**
+     * Resolves designator use in the statements.
+     * 
+     * <p>
+     * Called object name must be present in the symbol table. If not, throw error and set designator object  to noObj type. 
+     * Otherwise, designator object will be set to the object from symbol table.
+     * </p>
+     * 
+     * @param designatorDeclIdent Visited AST node
+     */
+    public void visit(DesignatorDeclIdent designatorDeclIdent) { 
+    	
+    	Obj designatorObj = findObjectInTheSymbolTable(designatorDeclIdent, designatorDeclIdent.getObjectName());
+    	
+    	if (designatorObj == Tab.noObj) {
+    		semanticErrorFound = true;
+    	}
+    	
+    	designatorDeclIdent.obj = designatorObj;
+    }
+
+    /**
+     * Resolves enum items calls ('.' operator).
+     * 
+     * @param designatorDeclIdentField Visited AST node
+     */
+    public void visit(DesignatorDeclIdentField designatorDeclIdentField) {
+    	Obj foundObj;
+    	
+    	String typeName = designatorDeclIdentField.getTypeName();
+    	String propertyName = designatorDeclIdentField.getPropertyName();
+    	
+	    // Verify used type exists
+	    foundObj = findObjectInTheSymbolTable(designatorDeclIdentField, typeName);
+	    
+	    if (foundObj == Tab.noObj) {
+	    	semanticErrorFound = true;
+	    	designatorDeclIdentField.obj = Tab.noObj;
+	    		
+	    	return;
+	    };
+	    	
+	    // Verify found object is type kind
+	    if (foundObj.getKind() != Obj.Type) {
+	    	designatorDeclIdentField.obj = Tab.noObj;
+	    		
+	    	reportError(INVALID_OPERATOR_FULLSTOP_ERROR, designatorDeclIdentField);
+	    	semanticErrorFound = true;
+	    		
+	    	return;
+	    }
+	    	    	    
+    	for (Obj member : foundObj.getLocalSymbols()) {
+    		if (member.getName().equals(propertyName)) {
+    			designatorDeclIdentField.obj = member;
+    			return;
+    		}
+    	}
+    	    	
+    	designatorDeclIdentField.obj = Tab.noObj;
+    	semanticErrorFound = true;
+    	reportError(String.format(NON_EXISTENT_OBJ_ERROR, designatorDeclIdentField.getPropertyName()), designatorDeclIdentField);
+    }
+    
+    /**
+     * Resolves length property call.
+     * 
+     * <p>
+     * Checks if object exists and if object kind is array. If not, reports appropriate error, otherwise sets designatorDeclIdentLength to const int.
+     * </p>
+     * 
+     * @param designatorDeclIdentLength Visited AST node
+     */
+    public void visit(DesignatorDeclIdentLength designatorDeclIdentLength) { 
+    	
+    	Obj designatorObj = findObjectInTheSymbolTable(designatorDeclIdentLength, designatorDeclIdentLength.getObjectName());
+    	semanticErrorFound = designatorObj == Tab.noObj ? true : semanticErrorFound;
+    	
+    	// Undefined object
+    	if (designatorObj == Tab.noObj || designatorObj == null) {
+    		designatorDeclIdentLength.obj = Tab.noObj;    		
+    		return;
+    	}
+    	
+    	// Found object is not array
+    	if (designatorObj.getType().getKind() != Struct.Array) {
+    		designatorDeclIdentLength.obj = Tab.noObj;
+    		
+    		reportError(LENGTH_CALL_ERROR, designatorDeclIdentLength);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	designatorDeclIdentLength.obj = new Obj(Obj.Var, designatorDeclIdentLength.getObjectName(), Tab.intType);
+    	
+    	// Needed because object must be seen as array when used during code generation phase
+    	designatorDeclIdentLength.obj.setAdr(designatorObj.getAdr());
+    	designatorDeclIdentLength.obj.setLevel(designatorObj.getLevel());
+    }
+    
+    /**
+     * Resolves array indexing.
+     * 
+     * @param designatorDeclIdentArrayElemAccess Visited AST node
+     */
+    public void visit(DesignatorDeclIdentArrayElemAccess designatorDeclIdentArrayElemAccess) { 
+    	
+    	// Errors reported during expression AST node visit
+    	if (designatorDeclIdentArrayElemAccess.getExprDecl().struct == Tab.noType) {
+    		designatorDeclIdentArrayElemAccess.obj = Tab.noObj;
+    		return;
+    	}
+    	
+    	// Check if ident from input sequence exists
+    	Obj identObj = findObjectInTheSymbolTable(designatorDeclIdentArrayElemAccess, designatorDeclIdentArrayElemAccess.getObjectName());
+    	semanticErrorFound = identObj == Tab.noObj ? true : semanticErrorFound;
+    	
+    	if (identObj == Tab.noObj || identObj == null) {
+    		designatorDeclIdentArrayElemAccess.obj = Tab.noObj;    		
+    		return;
+    	}
+    	
+    	// Check if the found object is array
+    	if (identObj.getType().getKind() != Struct.Array) {
+    		designatorDeclIdentArrayElemAccess.obj = Tab.noObj;
+    		
+    		reportError(INVALID_ARRAY_ACCESS_ERROR, designatorDeclIdentArrayElemAccess);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	// Check if expression is int type
+    	if (designatorDeclIdentArrayElemAccess.getExprDecl().struct.getKind() != Struct.Int) {
+    		designatorDeclIdentArrayElemAccess.obj = Tab.noObj;
+    		
+    		reportError(INVALID_ARRAY_INDEXING_ERROR, designatorDeclIdentArrayElemAccess);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	
+    	designatorDeclIdentArrayElemAccess.obj = new Obj(Obj.Var, designatorDeclIdentArrayElemAccess.getObjectName(), identObj.getType().getElemType());
+    	
+    	// Needed because object must be seen as array when used during code generation phase
+    	designatorDeclIdentArrayElemAccess.obj.setAdr(identObj.getAdr());
+    	designatorDeclIdentArrayElemAccess.obj.setLevel(identObj.getLevel());
+    }
+
+    /* <=======================================================================================================================================> */
+	/* <========================================================= Factor declarations =========================================================> */
+    
+    public void visit(FactorDeclNumber factorDeclNumber) { 
+    	factorDeclNumber.struct = Tab.intType;
+    }
+    
+    public void visit(FactorDeclChar factorDeclChar) { 
+    	factorDeclChar.struct = Tab.charType;
+    }
+    
+    public void visit(FactorDeclBool factorDeclBool) { 
+    	factorDeclBool.struct = boolType;
+    }
+    
+    public void visit(FactorDeclDesignator factorDeclDesignator) {
+    	
+    	// Errors reported during designator node visit
+    	if (factorDeclDesignator.getDesignatorDecl().obj == Tab.noObj || factorDeclDesignator.getDesignatorDecl().obj == null) {
+    		factorDeclDesignator.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	factorDeclDesignator.struct = factorDeclDesignator.getDesignatorDecl().obj.getType();
+    }
+    
+    /**
+     * Resolves arithmetics with parens.
+     * 
+     * @param factorDeclParenExpr Visited AST node
+     */
+    public void visit(FactorDeclParenExpr factorDeclParenExpr) { 
+    	
+    	// Errors reported during visiting expression AST node
+    	if (factorDeclParenExpr.getExprDecl().struct == Tab.noType) {
+    		factorDeclParenExpr.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// Type of present expression has to be int
+    	if (factorDeclParenExpr.getExprDecl().struct.getKind() != Struct.Int) {
+    		factorDeclParenExpr.struct = Tab.noType;
+    		
+    		reportError(INVALID_ARITHMETIC_TYPE_ERROR, factorDeclParenExpr);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	factorDeclParenExpr.struct = Tab.intType;
+    }
+    
+    /**
+     * Resolves array allocations.
+     * 
+     * @param factorDeclAllocationExpr Visited AST node
+     */
+    public void visit(FactorDeclAllocationExpr factorDeclAllocationExpr) { 
+    	
+    	// Errors reported during var type and expression validation
+    	if (factorDeclAllocationExpr.getVarType().struct == Tab.noType || 
+    		factorDeclAllocationExpr.getExprDecl().struct == Tab.noType) {
+    		
+    		factorDeclAllocationExpr.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// Check if allocator is integer
+    	if (factorDeclAllocationExpr.getExprDecl().struct.getKind() != Struct.Int) {
+    		factorDeclAllocationExpr.struct = Tab.noType;
+    		
+    		reportError(INVALID_ARRAY_INDEXING_ERROR, factorDeclAllocationExpr);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	factorDeclAllocationExpr.struct = new Struct(Struct.Array, factorDeclAllocationExpr.getVarType().struct);
+    	
+    }
+    
+    /**
+     * Resolves function calls. Forwarded parameters must match function definition.
+     * 
+     * @param factorDeclFunctionCall Visited AST node
+     */
+    public void visit(FactorDeclFunctionCall factorDeclFunctionCall) {
+    	Obj methodObj = factorDeclFunctionCall.getDesignatorDecl().obj;
+    	
+    	// Errors reported during designator node visit
+    	if (methodObj == Tab.noObj) {
+    		currentFunctionCallParamTypes.clear();
+    		factorDeclFunctionCall.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	if (!validFunctionCall(factorDeclFunctionCall, methodObj, currentFunctionCallParamTypes.size())) {
+    		currentFunctionCallParamTypes.clear();
+    		factorDeclFunctionCall.struct = Tab.noType;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	
+    	if (!validateFunctionCallArguments(factorDeclFunctionCall, methodObj, currentFunctionCallParamTypes)) {
+			currentFunctionCallParamTypes.clear();
+			factorDeclFunctionCall.struct = Tab.noType;
+    		semanticErrorFound = true;
+    		return;
+    	}
+    	
+    	int startIndex = 0;
+    	for (Obj obj : methodObj.getLocalSymbols()) {
+    		if (obj.getFpPos() > 0) {
+    			
+    			if (!currentFunctionCallParamTypes.get(startIndex).assignableTo(obj.getType())) {
+
+    	    		
+    	    		reportError(FUNCTION_CALL_INVALID_PARAM_TYPE_ERROR, factorDeclFunctionCall);
+
+    			}
+    			
+    			startIndex++;
+    		}
+    	}
+    	
+    	currentFunctionCallParamTypes.clear();
+    	factorDeclFunctionCall.struct = methodObj.getType();
+    }
+    
+    /* <===============================================================================================================================================> */
+	/* <========================================================= Act Parameters declarations =========================================================> */
+    
+    public void visit(ActParsDeclaration actParsDeclaration) {
+    	currentFunctionCallParamTypes.add(actParsDeclaration.getExprDecl().struct);
+    	actParsDeclaration.struct = actParsDeclaration.getExprDecl().struct;
+    }
+    
+    public void visit(ActParsDeclarationOneParam actParsDeclarationOneParam) {
+    	currentFunctionCallParamTypes.add(actParsDeclarationOneParam.getExprDecl().struct);
+    	actParsDeclarationOneParam.struct = actParsDeclarationOneParam.getExprDecl().struct;
+    }
+    
+    /* <=====================================================================================================================================> */
+	/* <========================================================= Term declarations =========================================================> */
+    
+    /**
+     * Resolves expressions where there is no mul operations.
+     * 
+     * @param mulopFactorDeclarationsEpsilon Visited AST node
+     */
+    public void visit(MulopFactorDeclarationsEpsilon mulopFactorDeclarationsEpsilon) { 
+    	mulopFactorDeclarationsEpsilon.struct = Tab.nullType;
+    }
+    
+    /**
+     * Resolves expressions where there is no add / sub operations.
+     * 
+     * @param addopTermDeclarationsEpsilon Visited AST node
+     */
+    public void visit(AddopTermDeclarationsEpsilon addopTermDeclarationsEpsilon) { 
+    	addopTermDeclarationsEpsilon.struct = Tab.nullType;
+    }
+    
+    /**
+     * Resolves checks needed for defining if unary minus can be used.
+     * 
+     * @param exprOptSignDeclMinus Visited AST nodes
+     */
+    public void visit(ExprOptSignDeclMinus exprOptSignDeclMinus) { 
+    	exprOptSignDeclMinus.struct = Tab.intType;
+    }
+    
+    /**
+     * Resolves mul operations that are allowed only for integer types.
+     * 
+     * @param mulopFactorDeclarations Visited AST node
+     */
+    public void visit(MulopFactorDeclarations mulopFactorDeclarations) { 
+    	
+    	// Error reported during visiting factorDecl AST node
+    	if (mulopFactorDeclarations.getFactorDecl().struct == Tab.noType) {
+    		mulopFactorDeclarations.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// Check if present factor is int
+    	if (mulopFactorDeclarations.getFactorDecl().struct.getKind() != Struct.Int) {
+    		mulopFactorDeclarations.struct = Tab.noType;
+    		
+    		reportError(INVALID_MUL_TYPE_ERROR, mulopFactorDeclarations);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	mulopFactorDeclarations.struct = Tab.intType;
+    }
+    
+    /**
+     * Resolves add/sub operations that are allowed only for integer types.
+     * 
+     * @param addopTermDeclarations Visited AST node
+     */
+    public void visit(AddopTermDeclarations addopTermDeclarations) { 
+    	
+    	// Errors reported during visiting term AST node
+    	if (addopTermDeclarations.getTermDecl().struct == Tab.noType) {
+    		addopTermDeclarations.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// Check if term has int type
+    	if (addopTermDeclarations.getTermDecl().struct.getKind() != Struct.Int) {
+    		addopTermDeclarations.struct = Tab.noType;
+    		
+    		reportError(INVALID_ARITHMETIC_TYPE_ERROR, addopTermDeclarations);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	addopTermDeclarations.struct = Tab.intType;
+    }
+    
+    /**
+     * Resolves mul operations that are allowed only for integer types.
+     * 
+     * @param termDecl Visited AST node
+     */
+    public void visit(TermDecl termDecl) { 
+    	
+    	// Errors reported during visiting termDecl and factorDecl AST nodes
+    	if (termDecl.getFactorDecl().struct == Tab.noType || termDecl.getMulopFactorDeclList().struct == Tab.noType) {
+    		termDecl.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// If mulopDecl is nullType, no mul operations are present in expressions -> the termDecl type will be the one factor has
+    	if (termDecl.getMulopFactorDeclList().struct == Tab.nullType) {
+    		termDecl.struct = termDecl.getFactorDecl().struct;
+    		return;
+    	}
+    	
+    	// If mulopDecl is present and semantically correct, it will be int type
+    	// Because of that, factor also has to be integer
+    	if (termDecl.getFactorDecl().struct.getKind() != Struct.Int) {
+    		termDecl.struct = Tab.noType;
+    		
+    		reportError(INVALID_MUL_TYPE_ERROR, termDecl);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	termDecl.struct = Tab.intType;
+    }
+    
+    /* <===========================================================================================================================================> */
+	/* <========================================================= Expression declarations =========================================================> */
+    
+    
+    /**
+     * Resolves checks needed for defining if unary minus can be used.
+     * 
+     * @param exprOptSignDeclEpsilon Visited AST nodes
+     */
+    public void visit(ExprOptSignDeclEpsilon exprOptSignDeclEpsilon) { 
+    	exprOptSignDeclEpsilon.struct = Tab.nullType;
+    }
+    
+    /**
+     * Resolves expressions.
+     * 
+     * @param exprDeclaration Visited AST node
+     */
+    public void visit(ExprDeclaration exprDeclaration) { 
+    	
+    	// Errors reported during visiting term AST nodes
+    	if (exprDeclaration.getTermDecl().struct == Tab.noType || 
+    		exprDeclaration.getAddopTermDeclList().struct == Tab.noType) {
+    		
+    		exprDeclaration.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// If addopTerm is present (not null type), input sequence is arithmetic operation
+    	if (exprDeclaration.getAddopTermDeclList().struct != Tab.nullType) {
+    		
+    		// Check if termDecl is int
+    		if (exprDeclaration.getTermDecl().struct.getKind() != Struct.Int) {
+    			exprDeclaration.struct = Tab.noType;
+    			
+    			reportError(INVALID_ARITHMETIC_TYPE_ERROR, exprDeclaration);
+    			semanticErrorFound = true;
+    			
+    			return;
+    		}
+    		
+    		exprDeclaration.struct = Tab.intType; 
+    		return;
+    	}
+    	
+    	// If addopDecl is not present, input sequence is not arithmetic operation
+    	// Term declaration has not to be int, but unary minus must no be present if term is not int
+    	if (exprDeclaration.getTermDecl().struct.getKind() != Struct.Int && exprDeclaration.getExprOptSignDecl().struct != Tab.nullType) {
+    		exprDeclaration.struct = Tab.noType;
+    		
+    		reportError(INVALID_UNARY_MINUS_ERROR, exprDeclaration);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	exprDeclaration.struct = exprDeclaration.getTermDecl().struct;
+    	
+    }
+    
+    /* Condition expressions declaration */
+        
+    public void visit(CondFactOptArgDeclarationEpsilon condFactOptArgDeclarationEpsilon) {
+    	condFactOptArgDeclarationEpsilon.struct = Tab.nullType;
+    }
+    
+    /**
+     * Resolves relation part of the ternary operator (>= a, == b, <= c...).
+     * 
+     * @param condFactOptArgDeclaration Visited AST node
+     */
+    public void visit(CondFactOptArgDeclaration condFactOptArgDeclaration) { 
+    	
+    	// Errors reported during visiting term and addop declarations
+    	if (condFactOptArgDeclaration.getTermDecl().struct == Tab.noType || 
+    		condFactOptArgDeclaration.getAddopTermDeclList().struct == Tab.noType) {
+    		condFactOptArgDeclaration.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	condFactOptArgDeclaration.struct = condFactOptArgDeclaration.getTermDecl().struct;
+    } 
+    
+    /**
+     * Resolves condition part of the ternary operator.
+     * 
+     * @param condFactDecl Visited AST node
+     */
+    public void visit(CondFactDecl condFactDecl) { 
+    	
+    	// Errors reported during term, addop and condition optional part AST nodes visit
+    	if (condFactDecl.getTermDecl().struct == Tab.noType ||
+    		condFactDecl.getAddopTermDeclList().struct == Tab.noType ||
+    		condFactDecl.getCondFactOptArgDecl().struct == Tab.noType) {
+    		
+    		condFactDecl.struct = Tab.noType;
+    		return;
+    	}
+    	    	
+    	// When relation operator part doesn't exist, term declaration must be boolean type. Addop and optional sign terms must not be present.
+    	if (condFactDecl.getCondFactOptArgDecl().struct == Tab.nullType && condFactDecl.getTermDecl().struct.getKind() != boolType.getKind()) {
+			
+			condFactDecl.struct = Tab.noType;
+			
+			reportError(INVALID_CONDITION_ERROR, condFactDecl);
+    		semanticErrorFound = true;
+    		
+    		return;
+			
+		}
+		
+    	if (condFactDecl.getAddopTermDeclList().struct != Tab.nullType) {
+			condFactDecl.struct = Tab.noType;
+			
+			reportError(INVALID_ARITHMETIC_TYPE_ERROR, condFactDecl);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	if (condFactDecl.getExprOptSignDecl().struct != Tab.nullType) {
+			condFactDecl.struct = Tab.noType;
+			
+			reportError(INVALID_UNARY_MINUS_ERROR, condFactDecl);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	    	
+    	condFactDecl.struct = boolType;
+    }
+    
+    /**
+     * Resolves ternary operation use.
+     * 
+     * @param exprDeclarationTernaryOp Visited AST node
+     */
+    public void visit(ExprDeclarationTernaryOp exprDeclarationTernaryOp) { 
+    	
+    	// Errors reported during visiting condition and expressions declarations
+    	if (exprDeclarationTernaryOp.getConditionDecl().struct == Tab.noType ||
+    		exprDeclarationTernaryOp.getExprDecl().struct == Tab.noType ||
+    		exprDeclarationTernaryOp.getExprDecl1().struct == Tab.noType) {
+    		
+    		exprDeclarationTernaryOp.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	// Condition part must be bool (no need to check since this part can either be boolean or noType, see CondFactDecl visitor)
+    	// Both present expression must be within same type
+    	
+    	Struct expr1Type = exprDeclarationTernaryOp.getExprDecl().struct;
+    	Struct expr2Type = exprDeclarationTernaryOp.getExprDecl1().struct;
+    	
+    	if (!expr1Type.assignableTo(expr2Type) ||
+    		!expr2Type.assignableTo(expr1Type)) {
+    		
+    		exprDeclarationTernaryOp.struct = Tab.noType;
+    		
+    		reportError(TERNARY_OPERATOR_ASSIGNMENT_VALUES_MISMATCH_ERROR, exprDeclarationTernaryOp);
+    		semanticErrorFound = true;
+    		
+    		return;
+    	}
+    	
+    	exprDeclarationTernaryOp.struct = expr2Type;
+    	
+    }
+    
+    public void visit(CondTermAndPartDeclaration condTermAndPartDeclaration) {
+    	
+    	// Errors reported during visiting condition factor and expressions parts
+    	if (condTermAndPartDeclaration.getCondFactDecl().struct == Tab.noType) {
+    		condTermAndPartDeclaration.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	condTermAndPartDeclaration.struct = boolType;
+    	
+    }
+    
+    public void visit(CondTermAndPartDeclarationEpsilon condTermAndPartDeclarationEpsilon) {
+    	condTermAndPartDeclarationEpsilon.struct = Tab.nullType;
+    }
+    
+    public void visit(CondTermDecl condTermDecl) {
+    	
+    	// Errors reported during condition factor node visit
+    	if (condTermDecl.getCondFactDecl().struct == Tab.noType ||
+    		condTermDecl.getCondTermAndPartDecl().struct == Tab.noType) {
+    		
+    		condTermDecl.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	condTermDecl.struct = boolType;
+    }
+    
+    public void visit(ConditionOrPartDeclarationEpsilon conditionOrPartDeclarationEpsilon) {
+    	conditionOrPartDeclarationEpsilon.struct = Tab.nullType;
+    }
+    
+    public void visit(ConditionOrPartDeclaration conditionOrPartDeclaration) {
+    	
+    	// Errors reported during condition term node visit
+    	if (conditionOrPartDeclaration.getCondTermDecl().struct == Tab.noType) {
+    		conditionOrPartDeclaration.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	conditionOrPartDeclaration.struct = boolType;
+    }
+    
+    public void visit(ConditionDecl conditionDecl) {
+    	
+    	// Errors reported during condition term declarations visit
+    	if (conditionDecl.getCondTermDecl().struct == Tab.noType ||
+    		conditionDecl.getConditionOrPartDecl().struct == Tab.noType) {
+    		
+    		conditionDecl.struct = Tab.noType;
+    		return;
+    	}
+    	
+    	conditionDecl.struct = boolType;
+    }
+    
+    /* Condition expression declaration end */
+    
+    /* <==================================================================================================================================> */
+	/* <========================================================= Helper methods =========================================================> */
+
+	public boolean isSemanticErrorFound() {
+		return semanticErrorFound;
+	}
+
+	/**
+	 * Returns number of static variables. This is used when creating global data during generation code phase.
+	 * 
+	 * @return Static / Global Vars number
+	 */
+	public int getNVars() {
+		return nVars;
+	}
+	
+	/**
+	 * Checks type validity and duplicate names, then inserts parameter / variable (scalar or array) into symbol table.
+	 * 
+	 * @param name          Name to be added to the symbol table
+	 * @param arrayStruct   Defines whether type is array or not
+	 * @param insertionType Defines whether insertion operation is for variable or for parameter
+	 * @param syntaxNode    Visited node
+	 */
+	public void addVariableOrParamToTheSymbolTable(String name, Struct arrayStruct, String insertionType, SyntaxNode syntaxNode) {
+		
+		// Check if variable / parameter has allowed type
+		// No need to report error since that is done during visiting variable type node
+		if (invalidVarType) {
+			return;
+		}
+
+		// Check if forwarded name already exists
+		if (doesNameExists(syntaxNode, name)) {
+			semanticErrorFound = true;
+			return;
+		}
+
+		String outputLog = String.format("%s with name [%s] has been added to the symbol table.", insertionType.equals(PARAM_INSERTION) ? "Parameter" : "Variable", name);
+		
+		Struct typeToInsert = (arrayStruct != Tab.nullType) ? arrayStruct : currentVarType;
+
+	    // Insert symbol
+	    Obj obj = Tab.insert(Obj.Var, name, typeToInsert);
+
+	    // If parameter is inserted, its object should have it declared
+	    if (insertionType.equals(PARAM_INSERTION)) {
+	    	currentParamIndex++;
+	        obj.setFpPos(currentParamIndex);
+	    } 
+
+	    LOGGER.info(outputLog);
+	}
+		
+	/* <==================================================================================================================> */
+}

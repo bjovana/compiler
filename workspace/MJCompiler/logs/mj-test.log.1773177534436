@@ -1,0 +1,308 @@
+INFO  22:17:41,386 - Compiling source file: program.mj
+INFO  22:17:41,388 - 
+
+
+====================================================================== Abstract Syntax Tree ======================================================================
+INFO  22:17:41,419 - #2 program
+INFO  22:17:41,420 - #55 A3
+INFO  22:17:41,420 - #5 int
+INFO  22:17:41,420 - #55 a
+INFO  22:17:41,421 - #52 ,
+INFO  22:17:41,421 - #55 b
+INFO  22:17:41,421 - #52 ,
+INFO  22:17:41,422 - #55 c
+INFO  22:17:41,422 - #51 ;
+INFO  22:17:41,422 - #47 {
+INFO  22:17:41,422 - #8 void
+INFO  22:17:41,423 - #3 main
+INFO  22:17:41,423 - #45 (
+INFO  22:17:41,423 - #46 )
+INFO  22:17:41,423 - #5 int
+INFO  22:17:41,423 - #55 niz
+INFO  22:17:41,423 - #49 [
+INFO  22:17:41,424 - #50 ]
+INFO  22:17:41,424 - #51 ;
+INFO  22:17:41,424 - #47 {
+INFO  22:17:41,425 - #55 a
+INFO  22:17:41,425 - #36 =
+INFO  22:17:41,425 - #56 5
+INFO  22:17:41,425 - #51 ;
+INFO  22:17:41,428 - #55 b
+INFO  22:17:41,428 - #36 =
+INFO  22:17:41,428 - #56 3
+INFO  22:17:41,428 - #51 ;
+INFO  22:17:41,428 - #22 goto
+INFO  22:17:41,428 - #55 label1
+INFO  22:17:41,428 - #51 ;
+INFO  22:17:41,428 - #55 label2
+INFO  22:17:41,428 - #44 :
+INFO  22:17:41,428 - #12 print
+INFO  22:17:41,429 - #45 (
+INFO  22:17:41,429 - #55 a
+INFO  22:17:41,429 - #46 )
+INFO  22:17:41,429 - #51 ;
+INFO  22:17:41,429 - #55 label1
+INFO  22:17:41,429 - #44 :
+INFO  22:17:41,429 - #12 print
+INFO  22:17:41,429 - #45 (
+INFO  22:17:41,429 - #55 b
+INFO  22:17:41,429 - #46 )
+INFO  22:17:41,430 - #51 ;
+INFO  22:17:41,430 - #17 if
+INFO  22:17:41,430 - #45 (
+INFO  22:17:41,430 - #55 a
+INFO  22:17:41,430 - #24 ==
+INFO  22:17:41,430 - #56 5
+INFO  22:17:41,430 - #46 )
+INFO  22:17:41,433 - #47 {
+INFO  22:17:41,433 - #55 a
+INFO  22:17:41,433 - #38 +++
+INFO  22:17:41,433 - #51 ;
+INFO  22:17:41,433 - #22 goto
+INFO  22:17:41,433 - #55 label2
+INFO  22:17:41,433 - #51 ;
+INFO  22:17:41,433 - #48 }
+INFO  22:17:41,433 - #48 }
+INFO  22:17:41,434 - #48 }
+INFO  22:17:41,435 - ProgramDecl(
+  ProgramNameDecl(
+   A3
+  ) [ProgramNameDecl]
+  GlobalObjectsVar(
+    GlobalObjectsEpsilon(
+    ) [GlobalObjectsEpsilon]
+    VarDecl(
+      VarTypeInt(
+      ) [VarTypeInt]
+      MultiVarIdDecl(
+       a
+        VarArrayDeclarationEpsilon(
+        ) [VarArrayDeclarationEpsilon]
+        MultiVarIdDecl(
+         b
+          VarArrayDeclarationEpsilon(
+          ) [VarArrayDeclarationEpsilon]
+          SingleVarIdDecl(
+           c
+            VarArrayDeclarationEpsilon(
+            ) [VarArrayDeclarationEpsilon]
+          ) [SingleVarIdDecl]
+        ) [MultiVarIdDecl]
+      ) [MultiVarIdDecl]
+    ) [VarDecl]
+  ) [GlobalObjectsVar]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+  MainFuncDecl(
+    VoidMain(
+    ) [VoidMain]
+    VarDeclarations(
+      VarDeclarationsEpsilon(
+      ) [VarDeclarationsEpsilon]
+      VarDecl(
+        VarTypeInt(
+        ) [VarTypeInt]
+        SingleVarIdDecl(
+         niz
+          VarArrayDeclaration(
+          ) [VarArrayDeclaration]
+        ) [SingleVarIdDecl]
+      ) [VarDecl]
+    ) [VarDeclarations]
+    StatementDeclarations(
+      StatementDeclDesignator(
+        DesignatorStatementDeclAssignment(
+          DesignatorDeclIdent(
+           a
+          ) [DesignatorDeclIdent]
+          ExprDeclaration(
+            ExprOptSignDeclEpsilon(
+            ) [ExprOptSignDeclEpsilon]
+            TermDecl(
+              FactorDeclNumber(
+               5
+              ) [FactorDeclNumber]
+              MulopFactorDeclarationsEpsilon(
+              ) [MulopFactorDeclarationsEpsilon]
+            ) [TermDecl]
+            AddopTermDeclarationsEpsilon(
+            ) [AddopTermDeclarationsEpsilon]
+          ) [ExprDeclaration]
+        ) [DesignatorStatementDeclAssignment]
+      ) [StatementDeclDesignator]
+      StatementDeclarations(
+        StatementDeclDesignator(
+          DesignatorStatementDeclAssignment(
+            DesignatorDeclIdent(
+             b
+            ) [DesignatorDeclIdent]
+            ExprDeclaration(
+              ExprOptSignDeclEpsilon(
+              ) [ExprOptSignDeclEpsilon]
+              TermDecl(
+                FactorDeclNumber(
+                 3
+                ) [FactorDeclNumber]
+                MulopFactorDeclarationsEpsilon(
+                ) [MulopFactorDeclarationsEpsilon]
+              ) [TermDecl]
+              AddopTermDeclarationsEpsilon(
+              ) [AddopTermDeclarationsEpsilon]
+            ) [ExprDeclaration]
+          ) [DesignatorStatementDeclAssignment]
+        ) [StatementDeclDesignator]
+        StatementDeclarations(
+          StatementDeclGoto(
+           label1
+          ) [StatementDeclGoto]
+          StatementDeclarations(
+            StatementDeclLabel(
+              GotoStmt(
+               label2
+              ) [GotoStmt]
+              StatementDeclPrint(
+                ExprDeclaration(
+                  ExprOptSignDeclEpsilon(
+                  ) [ExprOptSignDeclEpsilon]
+                  TermDecl(
+                    FactorDeclDesignator(
+                      DesignatorDeclIdent(
+                       a
+                      ) [DesignatorDeclIdent]
+                    ) [FactorDeclDesignator]
+                    MulopFactorDeclarationsEpsilon(
+                    ) [MulopFactorDeclarationsEpsilon]
+                  ) [TermDecl]
+                  AddopTermDeclarationsEpsilon(
+                  ) [AddopTermDeclarationsEpsilon]
+                ) [ExprDeclaration]
+                PrintArgsDeclarationEpsilon(
+                ) [PrintArgsDeclarationEpsilon]
+              ) [StatementDeclPrint]
+            ) [StatementDeclLabel]
+            StatementDeclarations(
+              StatementDeclLabel(
+                GotoStmt(
+                 label1
+                ) [GotoStmt]
+                StatementDeclPrint(
+                  ExprDeclaration(
+                    ExprOptSignDeclEpsilon(
+                    ) [ExprOptSignDeclEpsilon]
+                    TermDecl(
+                      FactorDeclDesignator(
+                        DesignatorDeclIdent(
+                         b
+                        ) [DesignatorDeclIdent]
+                      ) [FactorDeclDesignator]
+                      MulopFactorDeclarationsEpsilon(
+                      ) [MulopFactorDeclarationsEpsilon]
+                    ) [TermDecl]
+                    AddopTermDeclarationsEpsilon(
+                    ) [AddopTermDeclarationsEpsilon]
+                  ) [ExprDeclaration]
+                  PrintArgsDeclarationEpsilon(
+                  ) [PrintArgsDeclarationEpsilon]
+                ) [StatementDeclPrint]
+              ) [StatementDeclLabel]
+              StatementDeclarations(
+                StatementDeclIf(
+                  ConditionDecl(
+                    CondTermDecl(
+                      CondFactDecl(
+                        ExprOptSignDeclEpsilon(
+                        ) [ExprOptSignDeclEpsilon]
+                        TermDecl(
+                          FactorDeclDesignator(
+                            DesignatorDeclIdent(
+                             a
+                            ) [DesignatorDeclIdent]
+                          ) [FactorDeclDesignator]
+                          MulopFactorDeclarationsEpsilon(
+                          ) [MulopFactorDeclarationsEpsilon]
+                        ) [TermDecl]
+                        AddopTermDeclarationsEpsilon(
+                        ) [AddopTermDeclarationsEpsilon]
+                        CondFactOptArgDeclaration(
+                          RelopDeclEQ(
+                          ) [RelopDeclEQ]
+                          ExprOptSignDeclEpsilon(
+                          ) [ExprOptSignDeclEpsilon]
+                          TermDecl(
+                            FactorDeclNumber(
+                             5
+                            ) [FactorDeclNumber]
+                            MulopFactorDeclarationsEpsilon(
+                            ) [MulopFactorDeclarationsEpsilon]
+                          ) [TermDecl]
+                          AddopTermDeclarationsEpsilon(
+                          ) [AddopTermDeclarationsEpsilon]
+                        ) [CondFactOptArgDeclaration]
+                      ) [CondFactDecl]
+                      CondTermAndPartDeclarationEpsilon(
+                      ) [CondTermAndPartDeclarationEpsilon]
+                    ) [CondTermDecl]
+                    ConditionOrPartDeclarationEpsilon(
+                    ) [ConditionOrPartDeclarationEpsilon]
+                  ) [ConditionDecl]
+                  Rparen(
+                  ) [Rparen]
+                  CondStatementDeclarations(
+                    StatementDeclarations(
+                      StatementDeclDesignator(
+                        DesignatorStatementDeclDoubleIncrement(
+                          DesignatorDeclIdent(
+                           a
+                          ) [DesignatorDeclIdent]
+                        ) [DesignatorStatementDeclDoubleIncrement]
+                      ) [StatementDeclDesignator]
+                      StatementDeclarations(
+                        StatementDeclGoto(
+                         label2
+                        ) [StatementDeclGoto]
+                        StatementDeclarationsEpsilon(
+                        ) [StatementDeclarationsEpsilon]
+                      ) [StatementDeclarations]
+                    ) [StatementDeclarations]
+                  ) [CondStatementDeclarations]
+                  ElseDeclarationEpsilon(
+                  ) [ElseDeclarationEpsilon]
+                ) [StatementDeclIf]
+                StatementDeclarationsEpsilon(
+                ) [StatementDeclarationsEpsilon]
+              ) [StatementDeclarations]
+            ) [StatementDeclarations]
+          ) [StatementDeclarations]
+        ) [StatementDeclarations]
+      ) [StatementDeclarations]
+    ) [StatementDeclarations]
+  ) [MainFuncDecl]
+  CustomFuncDeclarationsListEpsilon(
+  ) [CustomFuncDeclarationsListEpsilon]
+) [ProgramDecl]
+INFO  22:17:41,435 - ===============================================================================================================================================================================
+
+
+
+INFO  22:17:41,436 - ====================================================================== Semantic Analysis ======================================================================
+
+
+INFO  22:17:41,444 - Initialized a Symbol Table.
+INFO  22:17:41,447 - Opened the [A3] scope.
+INFO  22:17:41,447 - Variable with name [c] has been added to the symbol table.
+INFO  22:17:41,447 - Variable with name [b] has been added to the symbol table.
+INFO  22:17:41,449 - Variable with name [a] has been added to the symbol table.
+INFO  22:17:41,449 - Opened the [main] scope.
+INFO  22:17:41,450 - Variable with name [niz] has been added to the symbol table.
+INFO  22:17:41,450 - [main] scope level: 0
+INFO  22:17:41,450 - Closed [main] scope.
+INFO  22:17:41,450 - Closed [A3] scope.
+INFO  22:17:41,451 - ===============================================================================================================================================================================
+
+
+INFO  22:17:41,451 - ====================================================================== Code generation ======================================================================
+
+INFO  22:17:41,459 - ===============================================================================================================================================================================
+
+
+

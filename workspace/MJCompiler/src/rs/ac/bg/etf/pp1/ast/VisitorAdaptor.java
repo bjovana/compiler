@@ -1,0 +1,196 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public abstract class VisitorAdaptor implements Visitor { 
+
+    public void visit(ActParsDecl ActParsDecl) { }
+    public void visit(DesignatorStatementDecl DesignatorStatementDecl) { }
+    public void visit(MulopFactorDeclList MulopFactorDeclList) { }
+    public void visit(ForStatementDecl ForStatementDecl) { }
+    public void visit(ExprDecl ExprDecl) { }
+    public void visit(StatementDeclList StatementDeclList) { }
+    public void visit(EnumItemDeclList EnumItemDeclList) { }
+    public void visit(ElseDecl ElseDecl) { }
+    public void visit(AddopDecl AddopDecl) { }
+    public void visit(FunctionType FunctionType) { }
+    public void visit(DesignatorDecl DesignatorDecl) { }
+    public void visit(ForConditionOpt ForConditionOpt) { }
+    public void visit(ExprOptSignDecl ExprOptSignDecl) { }
+    public void visit(SwitchOptionalStatementDeclList SwitchOptionalStatementDeclList) { }
+    public void visit(PrintArgsDecl PrintArgsDecl) { }
+    public void visit(CondStatementDecl CondStatementDecl) { }
+    public void visit(OptionalStatementDeclList OptionalStatementDeclList) { }
+    public void visit(GlobalObjectDeclList GlobalObjectDeclList) { }
+    public void visit(VarIdDeclList VarIdDeclList) { }
+    public void visit(ForDesignatorOpt ForDesignatorOpt) { }
+    public void visit(RelopDecl RelopDecl) { }
+    public void visit(CondFactOptArgDecl CondFactOptArgDecl) { }
+    public void visit(CustomFuncDeclList CustomFuncDeclList) { }
+    public void visit(MulopDecl MulopDecl) { }
+    public void visit(VarDeclList VarDeclList) { }
+    public void visit(ParamsDecl ParamsDecl) { }
+    public void visit(ConstVal ConstVal) { }
+    public void visit(ConditionOrPartDecl ConditionOrPartDecl) { }
+    public void visit(OptionalParamsDecl OptionalParamsDecl) { }
+    public void visit(StatementDecl StatementDecl) { }
+    public void visit(FactorDecl FactorDecl) { }
+    public void visit(ConstDeclMul ConstDeclMul) { }
+    public void visit(EnumItemAssignValue EnumItemAssignValue) { }
+    public void visit(ActParsDeclList ActParsDeclList) { }
+    public void visit(ColonSwitch ColonSwitch) { }
+    public void visit(AddopTermDeclList AddopTermDeclList) { }
+    public void visit(VarType VarType) { }
+    public void visit(CondTermAndPartDecl CondTermAndPartDecl) { }
+    public void visit(ReturnOptExpr ReturnOptExpr) { }
+    public void visit(ConstType ConstType) { }
+    public void visit(VarArrayDecl VarArrayDecl) { }
+    public void visit(RelopDeclLE RelopDeclLE) { visit(); }
+    public void visit(RelopDeclLT RelopDeclLT) { visit(); }
+    public void visit(RelopDeclGE RelopDeclGE) { visit(); }
+    public void visit(RelopDeclGT RelopDeclGT) { visit(); }
+    public void visit(RelopDeclNE RelopDeclNE) { visit(); }
+    public void visit(RelopDeclEQ RelopDeclEQ) { visit(); }
+    public void visit(CondFactOptArgDeclarationEpsilon CondFactOptArgDeclarationEpsilon) { visit(); }
+    public void visit(CondFactOptArgDeclaration CondFactOptArgDeclaration) { visit(); }
+    public void visit(CondFactDecl CondFactDecl) { visit(); }
+    public void visit(CondTermAndPartDeclarationEpsilon CondTermAndPartDeclarationEpsilon) { visit(); }
+    public void visit(CondTermAndPartDeclaration CondTermAndPartDeclaration) { visit(); }
+    public void visit(CondTermDecl CondTermDecl) { visit(); }
+    public void visit(And And) { visit(); }
+    public void visit(Or Or) { visit(); }
+    public void visit(ConditionOrPartDeclarationEpsilon ConditionOrPartDeclarationEpsilon) { visit(); }
+    public void visit(ConditionOrPartDeclaration ConditionOrPartDeclaration) { visit(); }
+    public void visit(ConditionDecl ConditionDecl) { visit(); }
+    public void visit(ExprOptSignDeclEpsilon ExprOptSignDeclEpsilon) { visit(); }
+    public void visit(ExprOptSignDeclMinus ExprOptSignDeclMinus) { visit(); }
+    public void visit(Colon Colon) { visit(); }
+    public void visit(Question Question) { visit(); }
+    public void visit(ExprDeclaration ExprDeclaration) { visit(); }
+    public void visit(ExprDeclarationTernaryOp ExprDeclarationTernaryOp) { visit(); }
+    public void visit(AddopTermDeclarationsEpsilon AddopTermDeclarationsEpsilon) { visit(); }
+    public void visit(AddopTermDeclarations AddopTermDeclarations) { visit(); }
+    public void visit(MulopFactorDeclarationsEpsilon MulopFactorDeclarationsEpsilon) { visit(); }
+    public void visit(MulopFactorDeclarations MulopFactorDeclarations) { visit(); }
+    public void visit(TermDecl TermDecl) { visit(); }
+    public void visit(FactorDeclFunctionCall FactorDeclFunctionCall) { visit(); }
+    public void visit(FactorDeclAllocationExpr FactorDeclAllocationExpr) { visit(); }
+    public void visit(FactorDeclDesignator FactorDeclDesignator) { visit(); }
+    public void visit(FactorDeclBool FactorDeclBool) { visit(); }
+    public void visit(FactorDeclParenExpr FactorDeclParenExpr) { visit(); }
+    public void visit(FactorDeclChar FactorDeclChar) { visit(); }
+    public void visit(FactorDeclNumber FactorDeclNumber) { visit(); }
+    public void visit(MulopDeclMod MulopDeclMod) { visit(); }
+    public void visit(MulopDeclDiv MulopDeclDiv) { visit(); }
+    public void visit(MulopDeclMul MulopDeclMul) { visit(); }
+    public void visit(AddopDeclMinus AddopDeclMinus) { visit(); }
+    public void visit(AddopDeclPlus AddopDeclPlus) { visit(); }
+    public void visit(ActParsDeclarationOneParam ActParsDeclarationOneParam) { visit(); }
+    public void visit(ActParsDeclaration ActParsDeclaration) { visit(); }
+    public void visit(ActParsDeclarationsEpsilon ActParsDeclarationsEpsilon) { visit(); }
+    public void visit(ActParsDeclarations ActParsDeclarations) { visit(); }
+    public void visit(DesignatorDeclIdentArrayElemAccess DesignatorDeclIdentArrayElemAccess) { visit(); }
+    public void visit(DesignatorDeclDot DesignatorDeclDot) { visit(); }
+    public void visit(DesignatorDeclIdentLength DesignatorDeclIdentLength) { visit(); }
+    public void visit(DesignatorDeclIdentField DesignatorDeclIdentField) { visit(); }
+    public void visit(DesignatorDeclIdent DesignatorDeclIdent) { visit(); }
+    public void visit(DesignatorStatementDeclDoubleIncrement DesignatorStatementDeclDoubleIncrement) { visit(); }
+    public void visit(DesignatorStatementDeclFunction DesignatorStatementDeclFunction) { visit(); }
+    public void visit(DesignatorStatementDeclDecrement DesignatorStatementDeclDecrement) { visit(); }
+    public void visit(DesignatorStatementDeclIncrement DesignatorStatementDeclIncrement) { visit(); }
+    public void visit(DesignatorStatementDeclAssignment DesignatorStatementDeclAssignment) { visit(); }
+    public void visit(ForStatementDeclarations ForStatementDeclarations) { visit(); }
+    public void visit(ForStatementDeclaration ForStatementDeclaration) { visit(); }
+    public void visit(ForConditionEpsilon ForConditionEpsilon) { visit(); }
+    public void visit(ForCondition ForCondition) { visit(); }
+    public void visit(ForDesignatorEpsilon ForDesignatorEpsilon) { visit(); }
+    public void visit(ForDesignator ForDesignator) { visit(); }
+    public void visit(CondStatementDeclarations CondStatementDeclarations) { visit(); }
+    public void visit(CondStatementDeclaration CondStatementDeclaration) { visit(); }
+    public void visit(ElseDeclarationEpsilon ElseDeclarationEpsilon) { visit(); }
+    public void visit(ElseDeclaration ElseDeclaration) { visit(); }
+    public void visit(ReturnOptExpressionEpsilon ReturnOptExpressionEpsilon) { visit(); }
+    public void visit(ReturnOptExpression ReturnOptExpression) { visit(); }
+    public void visit(OptionalStatementDeclarationsEpsilon OptionalStatementDeclarationsEpsilon) { visit(); }
+    public void visit(OptionalStatementDeclarations OptionalStatementDeclarations) { visit(); }
+    public void visit(ColonSwitchDerived1 ColonSwitchDerived1) { visit(); }
+    public void visit(Case Case) { visit(); }
+    public void visit(SwitchOptionalStatementDeclarationsEpsilon SwitchOptionalStatementDeclarationsEpsilon) { visit(); }
+    public void visit(SwitchOptionalStatementDeclarations SwitchOptionalStatementDeclarations) { visit(); }
+    public void visit(Switch Switch) { visit(); }
+    public void visit(Lparen Lparen) { visit(); }
+    public void visit(Rparen Rparen) { visit(); }
+    public void visit(PrintArgsDeclarationEpsilon PrintArgsDeclarationEpsilon) { visit(); }
+    public void visit(PrintArgsDeclaration PrintArgsDeclaration) { visit(); }
+    public void visit(GotoStmt GotoStmt) { visit(); }
+    public void visit(StatementDeclError StatementDeclError) { visit(); }
+    public void visit(StatementDeclGoto StatementDeclGoto) { visit(); }
+    public void visit(StatementDeclContinue StatementDeclContinue) { visit(); }
+    public void visit(StatementDeclBreak StatementDeclBreak) { visit(); }
+    public void visit(StatementDeclFor StatementDeclFor) { visit(); }
+    public void visit(StatementDeclIf StatementDeclIf) { visit(); }
+    public void visit(StatementDeclReturn StatementDeclReturn) { visit(); }
+    public void visit(StatementDeclSwitch StatementDeclSwitch) { visit(); }
+    public void visit(StatementDeclPrint StatementDeclPrint) { visit(); }
+    public void visit(StatementDeclRead StatementDeclRead) { visit(); }
+    public void visit(StatementDeclDesignator StatementDeclDesignator) { visit(); }
+    public void visit(StatementDeclLabel StatementDeclLabel) { visit(); }
+    public void visit(StatementDeclarationsEpsilon StatementDeclarationsEpsilon) { visit(); }
+    public void visit(StatementDeclarations StatementDeclarations) { visit(); }
+    public void visit(FunctionVoidType FunctionVoidType) { visit(); }
+    public void visit(FunctionNonVoidType FunctionNonVoidType) { visit(); }
+    public void visit(CustomFuncDecl CustomFuncDecl) { visit(); }
+    public void visit(CustomFuncDeclListError CustomFuncDeclListError) { visit(); }
+    public void visit(CustomFuncDeclarationsListEpsilon CustomFuncDeclarationsListEpsilon) { visit(); }
+    public void visit(CustomFuncDeclarationsList CustomFuncDeclarationsList) { visit(); }
+    public void visit(VoidMain VoidMain) { visit(); }
+    public void visit(MainFuncDecl MainFuncDecl) { visit(); }
+    public void visit(OptionalParamsDeclError OptionalParamsDeclError) { visit(); }
+    public void visit(OptionalParamsDeclEpsilon OptionalParamsDeclEpsilon) { visit(); }
+    public void visit(OptionalParamsDeclarations OptionalParamsDeclarations) { visit(); }
+    public void visit(MethodParamDecl MethodParamDecl) { visit(); }
+    public void visit(MethodParamsDecl MethodParamsDecl) { visit(); }
+    public void visit(EnumItemListError EnumItemListError) { visit(); }
+    public void visit(EnumItemListEpsilon EnumItemListEpsilon) { visit(); }
+    public void visit(EnumItemList EnumItemList) { visit(); }
+    public void visit(EnumValueEpsilon EnumValueEpsilon) { visit(); }
+    public void visit(EnumValue EnumValue) { visit(); }
+    public void visit(EnumItem EnumItem) { visit(); }
+    public void visit(EnumName EnumName) { visit(); }
+    public void visit(EnumDecl EnumDecl) { visit(); }
+    public void visit(ErrorVarIdDecl ErrorVarIdDecl) { visit(); }
+    public void visit(MultiVarIdDecl MultiVarIdDecl) { visit(); }
+    public void visit(SingleVarIdDecl SingleVarIdDecl) { visit(); }
+    public void visit(VarDecl VarDecl) { visit(); }
+    public void visit(VarArrayDeclarationEpsilon VarArrayDeclarationEpsilon) { visit(); }
+    public void visit(VarArrayDeclaration VarArrayDeclaration) { visit(); }
+    public void visit(VarTypeBool VarTypeBool) { visit(); }
+    public void visit(VarTypeChar VarTypeChar) { visit(); }
+    public void visit(VarTypeInt VarTypeInt) { visit(); }
+    public void visit(VarTypeIdent VarTypeIdent) { visit(); }
+    public void visit(VarDeclarationsEpsilon VarDeclarationsEpsilon) { visit(); }
+    public void visit(VarDeclarationsError VarDeclarationsError) { visit(); }
+    public void visit(VarDeclarations VarDeclarations) { visit(); }
+    public void visit(ConstDeclarationMulEpsilon ConstDeclarationMulEpsilon) { visit(); }
+    public void visit(ConstDeclarationMul ConstDeclarationMul) { visit(); }
+    public void visit(ConstValBool ConstValBool) { visit(); }
+    public void visit(ConstValChar ConstValChar) { visit(); }
+    public void visit(ConstValNumber ConstValNumber) { visit(); }
+    public void visit(ConstTypeBool ConstTypeBool) { visit(); }
+    public void visit(ConstTypeChar ConstTypeChar) { visit(); }
+    public void visit(ConstTypeInt ConstTypeInt) { visit(); }
+    public void visit(ConstTypeIdent ConstTypeIdent) { visit(); }
+    public void visit(ConstDecl ConstDecl) { visit(); }
+    public void visit(GlobalObjectsEpsilon GlobalObjectsEpsilon) { visit(); }
+    public void visit(GlobalObjectsEnum GlobalObjectsEnum) { visit(); }
+    public void visit(GlobalObjectsVar GlobalObjectsVar) { visit(); }
+    public void visit(GlobalObjectsConst GlobalObjectsConst) { visit(); }
+    public void visit(ProgramNameDecl ProgramNameDecl) { visit(); }
+    public void visit(ProgramDecl ProgramDecl) { visit(); }
+
+
+    public void visit() { }
+}

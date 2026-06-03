@@ -1,0 +1,98 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class MulopFactorDeclarations extends MulopFactorDeclList {
+
+    private MulopFactorDeclList MulopFactorDeclList;
+    private MulopDecl MulopDecl;
+    private FactorDecl FactorDecl;
+
+    public MulopFactorDeclarations (MulopFactorDeclList MulopFactorDeclList, MulopDecl MulopDecl, FactorDecl FactorDecl) {
+        this.MulopFactorDeclList=MulopFactorDeclList;
+        if(MulopFactorDeclList!=null) MulopFactorDeclList.setParent(this);
+        this.MulopDecl=MulopDecl;
+        if(MulopDecl!=null) MulopDecl.setParent(this);
+        this.FactorDecl=FactorDecl;
+        if(FactorDecl!=null) FactorDecl.setParent(this);
+    }
+
+    public MulopFactorDeclList getMulopFactorDeclList() {
+        return MulopFactorDeclList;
+    }
+
+    public void setMulopFactorDeclList(MulopFactorDeclList MulopFactorDeclList) {
+        this.MulopFactorDeclList=MulopFactorDeclList;
+    }
+
+    public MulopDecl getMulopDecl() {
+        return MulopDecl;
+    }
+
+    public void setMulopDecl(MulopDecl MulopDecl) {
+        this.MulopDecl=MulopDecl;
+    }
+
+    public FactorDecl getFactorDecl() {
+        return FactorDecl;
+    }
+
+    public void setFactorDecl(FactorDecl FactorDecl) {
+        this.FactorDecl=FactorDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(MulopFactorDeclList!=null) MulopFactorDeclList.accept(visitor);
+        if(MulopDecl!=null) MulopDecl.accept(visitor);
+        if(FactorDecl!=null) FactorDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(MulopFactorDeclList!=null) MulopFactorDeclList.traverseTopDown(visitor);
+        if(MulopDecl!=null) MulopDecl.traverseTopDown(visitor);
+        if(FactorDecl!=null) FactorDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(MulopFactorDeclList!=null) MulopFactorDeclList.traverseBottomUp(visitor);
+        if(MulopDecl!=null) MulopDecl.traverseBottomUp(visitor);
+        if(FactorDecl!=null) FactorDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("MulopFactorDeclarations(\n");
+
+        if(MulopFactorDeclList!=null)
+            buffer.append(MulopFactorDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(MulopDecl!=null)
+            buffer.append(MulopDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(FactorDecl!=null)
+            buffer.append(FactorDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [MulopFactorDeclarations]");
+        return buffer.toString();
+    }
+}

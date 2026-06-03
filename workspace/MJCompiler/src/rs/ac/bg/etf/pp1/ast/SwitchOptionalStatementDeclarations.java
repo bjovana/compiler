@@ -1,0 +1,98 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class SwitchOptionalStatementDeclarations extends SwitchOptionalStatementDeclList {
+
+    private SwitchOptionalStatementDeclList SwitchOptionalStatementDeclList;
+    private Case Case;
+    private OptionalStatementDeclList OptionalStatementDeclList;
+
+    public SwitchOptionalStatementDeclarations (SwitchOptionalStatementDeclList SwitchOptionalStatementDeclList, Case Case, OptionalStatementDeclList OptionalStatementDeclList) {
+        this.SwitchOptionalStatementDeclList=SwitchOptionalStatementDeclList;
+        if(SwitchOptionalStatementDeclList!=null) SwitchOptionalStatementDeclList.setParent(this);
+        this.Case=Case;
+        if(Case!=null) Case.setParent(this);
+        this.OptionalStatementDeclList=OptionalStatementDeclList;
+        if(OptionalStatementDeclList!=null) OptionalStatementDeclList.setParent(this);
+    }
+
+    public SwitchOptionalStatementDeclList getSwitchOptionalStatementDeclList() {
+        return SwitchOptionalStatementDeclList;
+    }
+
+    public void setSwitchOptionalStatementDeclList(SwitchOptionalStatementDeclList SwitchOptionalStatementDeclList) {
+        this.SwitchOptionalStatementDeclList=SwitchOptionalStatementDeclList;
+    }
+
+    public Case getCase() {
+        return Case;
+    }
+
+    public void setCase(Case Case) {
+        this.Case=Case;
+    }
+
+    public OptionalStatementDeclList getOptionalStatementDeclList() {
+        return OptionalStatementDeclList;
+    }
+
+    public void setOptionalStatementDeclList(OptionalStatementDeclList OptionalStatementDeclList) {
+        this.OptionalStatementDeclList=OptionalStatementDeclList;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(SwitchOptionalStatementDeclList!=null) SwitchOptionalStatementDeclList.accept(visitor);
+        if(Case!=null) Case.accept(visitor);
+        if(OptionalStatementDeclList!=null) OptionalStatementDeclList.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(SwitchOptionalStatementDeclList!=null) SwitchOptionalStatementDeclList.traverseTopDown(visitor);
+        if(Case!=null) Case.traverseTopDown(visitor);
+        if(OptionalStatementDeclList!=null) OptionalStatementDeclList.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(SwitchOptionalStatementDeclList!=null) SwitchOptionalStatementDeclList.traverseBottomUp(visitor);
+        if(Case!=null) Case.traverseBottomUp(visitor);
+        if(OptionalStatementDeclList!=null) OptionalStatementDeclList.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("SwitchOptionalStatementDeclarations(\n");
+
+        if(SwitchOptionalStatementDeclList!=null)
+            buffer.append(SwitchOptionalStatementDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(Case!=null)
+            buffer.append(Case.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(OptionalStatementDeclList!=null)
+            buffer.append(OptionalStatementDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [SwitchOptionalStatementDeclarations]");
+        return buffer.toString();
+    }
+}

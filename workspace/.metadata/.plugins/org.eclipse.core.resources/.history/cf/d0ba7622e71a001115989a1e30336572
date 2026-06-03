@@ -1,0 +1,58 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class ClassMethods extends ClassMethodDeclList {
+
+    private CustomFuncDeclList CustomFuncDeclList;
+
+    public ClassMethods (CustomFuncDeclList CustomFuncDeclList) {
+        this.CustomFuncDeclList=CustomFuncDeclList;
+        if(CustomFuncDeclList!=null) CustomFuncDeclList.setParent(this);
+    }
+
+    public CustomFuncDeclList getCustomFuncDeclList() {
+        return CustomFuncDeclList;
+    }
+
+    public void setCustomFuncDeclList(CustomFuncDeclList CustomFuncDeclList) {
+        this.CustomFuncDeclList=CustomFuncDeclList;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(CustomFuncDeclList!=null) CustomFuncDeclList.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(CustomFuncDeclList!=null) CustomFuncDeclList.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(CustomFuncDeclList!=null) CustomFuncDeclList.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("ClassMethods(\n");
+
+        if(CustomFuncDeclList!=null)
+            buffer.append(CustomFuncDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [ClassMethods]");
+        return buffer.toString();
+    }
+}

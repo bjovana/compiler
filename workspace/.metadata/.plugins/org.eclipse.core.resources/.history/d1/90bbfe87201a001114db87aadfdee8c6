@@ -1,0 +1,59 @@
+package rs.ac.bg.etf.pp1.constants;
+
+public class ErrorConstants {
+
+	public static final String NAME_ALREADY_DECLARED_ERROR = "Name [%s] is already declared. Error";
+	public static final String SCOPE_ALREADY_DECLARED_ERROR = "Scope [%s] is already declared. Error";
+	
+	public static final String NON_EXISTENT_TYPE_ERROR = "Non existent type declared";
+	public static final String NON_EXISTENT_OBJ_ERROR = "Non existent designator [%s] used at";
+	
+	public static final String UNALLOWED_TYPE_ASSIGNMENT_ERROR = "Unallowed [%s] type declared";
+	public static final String UNALLOWED_VALUE_ASSIGNED_TO_CONST_ERROR = "Invalid value assigned to a constant";
+
+	public static final String INVALID_ARRAY_ACCESS_ERROR = "Array element access is not allowed for non-array types. Error";
+	public static final String INVALID_ARRAY_INDEXING_ERROR = "Integer constant must be used when indexing / allocating arrays. Error";
+	
+	public static final String INVALID_ARITHMETIC_TYPE_ERROR = "Arithmetic operations are possible only for integer types. Error";
+	public static final String INVALID_MUL_TYPE_ERROR = "Mul operations are possible only for integer types. Error";
+	public static final String INVALID_COMPARING_TYPE_ERROR = "Compare operations are possible only for integer type. Error";
+	public static final String INVALID_ASSIGNMENT_TYPE_ERROR = "Invalid type assigned to var. Error";
+	public static final String INVALID_UNARY_MINUS_ERROR = "Invalid unary minus present at non arithmetic expression";
+	
+	public static final String TERNARY_OPERATOR_ASSIGNMENT_VALUES_MISMATCH_ERROR = "Ternary operator assignment values should have the same type. Error"; 
+	public static final String INVALID_CONDITION_ERROR = "Condition type should be boolean. Error";
+	
+	public static final String UNALLOWED_RELOP_USE_ERROR = "Relation operator can be used only for integer types. Error";
+	
+	public static final String READ_INVALID_ARGUMENTS_TYPE_ERROR = "Read function accepts only basic types. Error";
+	public static final String READ_NON_VAR_TYPES_ERROR = "Read function cannot process constants. Error";
+	
+	public static final String PRINT_ARGUMENT_ERROR = "Print function accepts only basic types. Error";
+	
+	public static final String LENGTH_CALL_ERROR = "Length option can be called only for iterable types. Error";
+	
+	public static final String ILLEGAL_CONST_ASSIGNMENT_ERROR = "Assigning new value to a constant type is unallowed. Error";
+	public static final String ILLEGAL_CONST_INCREMENT_DECREMENT_ERROR = "%s constant value is unallowed. Error";
+	
+	public static final String UNALLOWED_INCREMENT_DECREMENT_TYPE = "%s is allowed only for int types. Error";
+	
+	public static final String SWITCH_DUPLICATE_CASES_ERROR = "Cases of the switch statement must be unique. Error";
+	public static final String SWITCH_EXPRESSION_INALID_TYPE_ERROR = "Switch expression must be int type. Error";
+	
+	public static final String MISSING_RETURN_STATEMENT_NON_VOID_FUNCTION_ERROR = "Missing return statement for the non void function declared";
+	public static final String MISING_SAFE_RETURN_STATEMENT_NON_VOID_FUNCTION_ERROR = "Safe return missing for the non void function declared";
+	public static final String INVALID_RETURN_TYPE_ERROR = "Invalid type returned for the function declared";
+	
+	public static final String FUNCTION_CALL_INVALID_PARAMS_NUMBER_ERROR = "Invalid function parameters number. Expected %s, but is %s. Error";
+	public static final String FUNCTION_CALL_INVALID_PARAM_TYPE_ERROR = "Invalid parameter type listed";
+	public static final String FUNCTION_CALL_NON_METH_OBJECT_ERROR = "[%s] is not a function. Error";
+	
+	public static final String UNALLOWED_CONTINUE_CALL_ERROR = "Continue can be called only as part of for loops. Error";
+	public static final String UNALLOWED_BREAK_CALL_ERROR = "Break can be called only as part of switch statements or for loops. Error";
+	
+	public static final String DOUBLE_ENUM_VALUE_ERROR = "Double enum value present";
+	
+	private ErrorConstants() {
+		// Private constructor for preventing error constants class instantiation
+	}
+}

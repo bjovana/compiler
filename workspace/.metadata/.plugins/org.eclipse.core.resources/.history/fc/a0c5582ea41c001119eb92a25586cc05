@@ -1,0 +1,23 @@
+program b4
+
+{
+
+	int sum(int a, int b)
+	{
+    	return a + b;
+	}
+	
+	
+    void main()
+    int x;
+    int y;
+    {
+        x = 2;
+        y = 3;
+
+        if(x > y && sum(x,y) == 5)
+            print(1); 
+        else
+            print(0); // 0
+    }
+}

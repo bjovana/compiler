@@ -1,0 +1,78 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class StatementDeclarations extends StatementDeclList {
+
+    private StatementDecl StatementDecl;
+    private StatementDeclList StatementDeclList;
+
+    public StatementDeclarations (StatementDecl StatementDecl, StatementDeclList StatementDeclList) {
+        this.StatementDecl=StatementDecl;
+        if(StatementDecl!=null) StatementDecl.setParent(this);
+        this.StatementDeclList=StatementDeclList;
+        if(StatementDeclList!=null) StatementDeclList.setParent(this);
+    }
+
+    public StatementDecl getStatementDecl() {
+        return StatementDecl;
+    }
+
+    public void setStatementDecl(StatementDecl StatementDecl) {
+        this.StatementDecl=StatementDecl;
+    }
+
+    public StatementDeclList getStatementDeclList() {
+        return StatementDeclList;
+    }
+
+    public void setStatementDeclList(StatementDeclList StatementDeclList) {
+        this.StatementDeclList=StatementDeclList;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(StatementDecl!=null) StatementDecl.accept(visitor);
+        if(StatementDeclList!=null) StatementDeclList.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(StatementDecl!=null) StatementDecl.traverseTopDown(visitor);
+        if(StatementDeclList!=null) StatementDeclList.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(StatementDecl!=null) StatementDecl.traverseBottomUp(visitor);
+        if(StatementDeclList!=null) StatementDeclList.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("StatementDeclarations(\n");
+
+        if(StatementDecl!=null)
+            buffer.append(StatementDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(StatementDeclList!=null)
+            buffer.append(StatementDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [StatementDeclarations]");
+        return buffer.toString();
+    }
+}

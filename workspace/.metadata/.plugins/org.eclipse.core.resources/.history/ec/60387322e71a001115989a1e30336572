@@ -1,0 +1,78 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class GlobalObjectsConst extends GlobalObjectDeclList {
+
+    private GlobalObjectDeclList GlobalObjectDeclList;
+    private ConstDecl ConstDecl;
+
+    public GlobalObjectsConst (GlobalObjectDeclList GlobalObjectDeclList, ConstDecl ConstDecl) {
+        this.GlobalObjectDeclList=GlobalObjectDeclList;
+        if(GlobalObjectDeclList!=null) GlobalObjectDeclList.setParent(this);
+        this.ConstDecl=ConstDecl;
+        if(ConstDecl!=null) ConstDecl.setParent(this);
+    }
+
+    public GlobalObjectDeclList getGlobalObjectDeclList() {
+        return GlobalObjectDeclList;
+    }
+
+    public void setGlobalObjectDeclList(GlobalObjectDeclList GlobalObjectDeclList) {
+        this.GlobalObjectDeclList=GlobalObjectDeclList;
+    }
+
+    public ConstDecl getConstDecl() {
+        return ConstDecl;
+    }
+
+    public void setConstDecl(ConstDecl ConstDecl) {
+        this.ConstDecl=ConstDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(GlobalObjectDeclList!=null) GlobalObjectDeclList.accept(visitor);
+        if(ConstDecl!=null) ConstDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(GlobalObjectDeclList!=null) GlobalObjectDeclList.traverseTopDown(visitor);
+        if(ConstDecl!=null) ConstDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(GlobalObjectDeclList!=null) GlobalObjectDeclList.traverseBottomUp(visitor);
+        if(ConstDecl!=null) ConstDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("GlobalObjectsConst(\n");
+
+        if(GlobalObjectDeclList!=null)
+            buffer.append(GlobalObjectDeclList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ConstDecl!=null)
+            buffer.append(ConstDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [GlobalObjectsConst]");
+        return buffer.toString();
+    }
+}

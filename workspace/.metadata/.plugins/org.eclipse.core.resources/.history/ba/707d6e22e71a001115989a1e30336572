@@ -1,0 +1,58 @@
+// generated with ast extension for cup
+// version 0.8
+// 7/2/2026 23:20:24
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class StatementDeclReturn extends StatementDecl {
+
+    private ReturnOptExpr ReturnOptExpr;
+
+    public StatementDeclReturn (ReturnOptExpr ReturnOptExpr) {
+        this.ReturnOptExpr=ReturnOptExpr;
+        if(ReturnOptExpr!=null) ReturnOptExpr.setParent(this);
+    }
+
+    public ReturnOptExpr getReturnOptExpr() {
+        return ReturnOptExpr;
+    }
+
+    public void setReturnOptExpr(ReturnOptExpr ReturnOptExpr) {
+        this.ReturnOptExpr=ReturnOptExpr;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(ReturnOptExpr!=null) ReturnOptExpr.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(ReturnOptExpr!=null) ReturnOptExpr.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(ReturnOptExpr!=null) ReturnOptExpr.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("StatementDeclReturn(\n");
+
+        if(ReturnOptExpr!=null)
+            buffer.append(ReturnOptExpr.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [StatementDeclReturn]");
+        return buffer.toString();
+    }
+}

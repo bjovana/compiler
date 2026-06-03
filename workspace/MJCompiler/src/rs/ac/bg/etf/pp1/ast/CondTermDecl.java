@@ -1,0 +1,98 @@
+// generated with ast extension for cup
+// version 0.8
+// 10/2/2026 22:32:38
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class CondTermDecl implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
+
+    private CondFactDecl CondFactDecl;
+    private CondTermAndPartDecl CondTermAndPartDecl;
+
+    public CondTermDecl (CondFactDecl CondFactDecl, CondTermAndPartDecl CondTermAndPartDecl) {
+        this.CondFactDecl=CondFactDecl;
+        if(CondFactDecl!=null) CondFactDecl.setParent(this);
+        this.CondTermAndPartDecl=CondTermAndPartDecl;
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.setParent(this);
+    }
+
+    public CondFactDecl getCondFactDecl() {
+        return CondFactDecl;
+    }
+
+    public void setCondFactDecl(CondFactDecl CondFactDecl) {
+        this.CondFactDecl=CondFactDecl;
+    }
+
+    public CondTermAndPartDecl getCondTermAndPartDecl() {
+        return CondTermAndPartDecl;
+    }
+
+    public void setCondTermAndPartDecl(CondTermAndPartDecl CondTermAndPartDecl) {
+        this.CondTermAndPartDecl=CondTermAndPartDecl;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(CondFactDecl!=null) CondFactDecl.accept(visitor);
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(CondFactDecl!=null) CondFactDecl.traverseTopDown(visitor);
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(CondFactDecl!=null) CondFactDecl.traverseBottomUp(visitor);
+        if(CondTermAndPartDecl!=null) CondTermAndPartDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("CondTermDecl(\n");
+
+        if(CondFactDecl!=null)
+            buffer.append(CondFactDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(CondTermAndPartDecl!=null)
+            buffer.append(CondTermAndPartDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [CondTermDecl]");
+        return buffer.toString();
+    }
+}

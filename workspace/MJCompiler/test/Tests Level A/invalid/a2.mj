@@ -1,0 +1,9 @@
+program A2
+
+{
+    void main()
+    int a;
+    {
+        a = 1 > 3 ? 2 : 'a';
+    }
+}

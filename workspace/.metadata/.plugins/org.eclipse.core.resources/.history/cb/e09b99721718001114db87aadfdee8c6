@@ -1,0 +1,74 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import rs.ac.bg.etf.pp1.CounterVisitor.*;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.*;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+
+public class CodeGeneratorUtils {
+	
+	public static void enterMethod(SyntaxNode methodNode) {
+		
+		VarCounter varCounter = new VarCounter();
+		methodNode.traverseTopDown(varCounter);
+		
+		MethodParamCounter fpCounter = new MethodParamCounter();
+		methodNode.traverseTopDown(fpCounter);
+		
+		// Generate the entry
+		Code.put(Code.enter);
+		Code.put(fpCounter.getCount());
+		Code.put(fpCounter.getCount() + varCounter.getCount());
+	}
+	
+	public static void exitMethod() {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	public static void swap() {
+	    Code.put(Code.dup_x1);
+	    Code.put(Code.pop);
+	}
+	
+	
+	public static void generateBuiltInsCode() {
+		generateOrdOrChrBuiltInsCode("ord");
+		generateOrdOrChrBuiltInsCode("chr");
+		generateLenBuiltIn();
+	}
+	
+	private static void generateOrdOrChrBuiltInsCode(String builtIn) {
+	    Obj ordObj = Tab.find(builtIn);
+	    ordObj.setAdr(Code.pc);
+
+	    Code.put(Code.enter);
+	    Code.put(1); 
+	    Code.put(1); 
+
+	    Code.put(Code.load_n); 
+	    Code.put(Code.exit);
+	    Code.put(Code.return_);
+	}
+		
+	private static void generateLenBuiltIn() {
+
+	    Obj lenObj = Tab.find("len");
+	    lenObj.setAdr(Code.pc);
+
+	    Code.put(Code.enter);
+	    Code.put(1);
+	    Code.put(1);
+
+	    Code.put(Code.load_n);      
+	    Code.put(Code.arraylength);
+
+	    Code.put(Code.exit);
+	    Code.put(Code.return_);
+	}
+	
+	private CodeGeneratorUtils() {
+		// Prevents utils class instantiation
+	}
+}

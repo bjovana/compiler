@@ -1,0 +1,18 @@
+program A3
+
+int a,b,c;
+
+{
+    void main()
+    {
+        a = 5;
+        b = 3;
+
+        c = (a * b + 10 / 2 - 1) % 7;
+
+        print(c); // 5
+        
+        a+++;
+        print(a); // 7
+    }
+}

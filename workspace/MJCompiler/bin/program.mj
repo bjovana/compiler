@@ -1,0 +1,23 @@
+program A3
+
+int a,b,c;
+
+{
+    void main()
+    int niz[];
+    {
+        a = 5;
+        b = 3;
+		
+		goto label1;
+		
+		label2: print(a);
+    	
+		label1: print(b);
+    	
+    	if (a==5) {
+    		a+++;
+    		goto label2;
+    	}
+    }
+}

@@ -1,0 +1,36 @@
+1772371834892	Rename field 'INVALID_TERNARY_CONDITION_ERROR'
+1772379572042	Rename field 'trueJumpAddress'
+1772379599377	Rename field 'falseJumpAddress'
+1772379610032	Rename field 'ternartOperatorTrueJumpAddress'
+1772407089310	Rename field 'forLoopJump'
+1772407751899	Rename field 'forActionJumps'
+1772407761369	Rename field 'forAStatementJumps'
+1772410848900	Rename field 'switchMatchFound'
+1772457338276	Rename local variable 'jumpKind'
+1772457347599	Rename local variable 'jumpt'
+1772458091532	Rename field 'orRelopJumps'
+1772484706556	Rename local variable 'propertyName'
+1772488240220	Rename local variable 'ordObj'
+1772493282142	Delete element
+1772493318985	Copy file
+1772493358113	Move 'test302.mj' to 'Tests Level B'
+1772493379023	Move 'test303.mj' to 'Tests Level C'
+1772493390749	Delete element
+1772651220324	Copy compilation unit
+1772651228133	Copy compilation unit
+1772651248775	Delete elements
+1772651326483	Rename type 'ConstantUtils'
+1772651467940	Rename type 'ErrorUtils'
+1772651535556	Delete element
+1772656629682	Rename local variable 'methodName'
+1772656641357	Rename local variable 'methodType'
+1772657620363	Rename local variable 'functionObj'
+1772657629554	Rename local variable 'functionName'
+1772662429443	Rename method 'generateOrdOrChrBuiltIns'
+1772662441128	Rename method 'generateLenBuiltIn'
+1772746928779	Delete elements
+1772819998531	Delete elements
+1772887765441	Rename field 'currentClassScope'
+1772903475234	Rename local variable 'typeObj'
+1772912735173	Rename local variable 'parentType'
+1772919409230	Rename field 'currentParent'

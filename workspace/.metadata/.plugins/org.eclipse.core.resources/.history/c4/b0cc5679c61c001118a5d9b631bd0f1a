@@ -1,0 +1,474 @@
+package rs.ac.bg.etf.pp1;
+
+/* Import section for including needed packages and functions */
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+/*============================================================================================================*/
+
+
+
+/* Code section for defining and overriding existing functions */
+
+/*
+ * Overrides methods for reporting errors
+ */
+ 
+parser code {:
+
+	Logger log = Logger.getLogger(getClass());
+   	
+   	public boolean syntaxErrorFound = false;
+   
+    // Error reports
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+  	// Error reports
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSyntax error", cur_token);
+    }
+  
+  	// Error reports
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatal error, parser cannot process input", cur_token);
+    }
+
+	// Error reports
+    public void report_error(String message, Object info) {
+    	syntaxErrorFound = true;
+    
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" on line ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+
+:}
+
+/*
+ * Loading next token from the input sequence. Tokens are generated as part of lexical analysis
+ */
+scan with {:
+	
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+	
+:}
+
+/*============================================================================================================*/
+
+
+
+/* Grammar section for defining (non)terminals and its productions */
+
+/* Terminals split per sections: keywords, boolean literals, statements, loops, operators (comparison, assignment, arithmetical, logical, ternary), brackets, punctuation marks, regular expressions */
+
+terminal PROG, MAIN, CONST, INT, CHAR, BOOL, VOID, ENUM, NEW, CASE, PRINT, RETURN, READ, LENGTH; // Keywords
+
+terminal Boolean BOOLCONST; // Boolean literals - can be true or false
+
+terminal IF, ELSE, BREAK, CONTINUE, SWITCH, GOTO; // Statements
+terminal FOR; // Loops
+
+terminal EQ, NE, LE, GE, LT, GT; // Comparison operators
+terminal INC, DEC, PLUS, MINUS, MUL, DIV, EQUAL, MOD, DOUBLE_INC, DOT, CARET; // Assignment / arithmetical operators
+terminal AND, OR; // Logical operators
+terminal QUESTION, COLON; // Ternary operator
+
+terminal LPAREN, RPAREN, LBRACE, RBRACE, SLBRACE, SRBRACE; // Brackets
+terminal SEMI, COMMA, FULLSTOP; // Punctuation marks
+
+// Regular expressions 
+terminal Character CHARCONST; 
+terminal String IDENT;
+terminal Integer NUMBER;
+
+
+/*============================================================================================================*/
+
+/* NonTerminals */
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramDecl, ProgramNameDecl;
+
+nonterminal GlobalObjectDeclList, MainFuncDecl, ParamsDecl, OptionalParamsDecl, CustomFuncDecl, CustomFuncDeclList, GotoStmt;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj VoidMain, FunctionType;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDecl, ConstDeclMul;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstType, ConstVal;
+
+nonterminal VarDecl, VarIdDeclList, VarDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct VarType, VarArrayDecl;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj EnumDecl, EnumItemDeclList, EnumItem, EnumItemAssignValue, EnumName; 
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj StatementDeclList, StatementDecl, DesignatorStatementDecl, DesignatorDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj SwitchOptionalStatementDeclList, OptionalStatementDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ExprDecl, ExprOptSignDecl, ReturnOptExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ElseDecl, CondStatementDecl; 
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ForDesignatorOpt, ForConditionOpt, ForStatementDecl;
+nonterminal Rparen, Lparen, Or, Question, And, Switch;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct AddopDecl, MulopDecl, FactorDecl, TermDecl, MulopFactorDeclList, AddopTermDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConditionDecl, ConditionOrPartDecl, CondTermDecl, CondTermAndPartDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactDecl, CondFactOptArgDecl, RelopDecl;
+nonterminal Colon, Case, ColonSwitch;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct PrintArgsDecl, ActParsDeclList, ActParsDecl;
+
+/*============================================================================================================*/
+
+precedence left ELSE; // Resolves shift reduce conflict when else is present in the if statement
+
+/* Grammar Productions */
+
+/* The following section introduces global structure of the MJ program */
+
+ProgramDecl ::= (ProgramDecl) PROG ProgramNameDecl GlobalObjectDeclList LBRACE CustomFuncDeclList MainFuncDecl CustomFuncDeclList RBRACE;
+
+ProgramNameDecl ::= (ProgramNameDecl)IDENT:programName;
+
+GlobalObjectDeclList ::= (GlobalObjectsConst) GlobalObjectDeclList ConstDecl
+						 |
+						 (GlobalObjectsVar) GlobalObjectDeclList VarDecl
+						 |
+						 (GlobalObjectsEnum) GlobalObjectDeclList EnumDecl
+						 |
+						 (GlobalObjectsEpsilon) /* Epsilon Production */;
+
+/*============================================================================================================*/
+
+
+
+/* The following section introduces constants to MJ Compiler  */
+
+ConstDecl ::= (ConstDecl) CONST ConstType IDENT:constName EQUAL ConstVal ConstDeclMul SEMI;
+			  
+ConstType ::= (ConstTypeIdent) IDENT:typeName
+              |
+			  (ConstTypeInt) INT
+			  |
+			  (ConstTypeChar) CHAR
+			  |
+			  (ConstTypeBool) BOOL;
+
+ConstVal ::= (ConstValNumber) NUMBER:numberLiteral
+             |
+		     (ConstValChar) CHARCONST:charLiteral
+		     |
+		     (ConstValBool) BOOLCONST:boolLiteral;
+
+ConstDeclMul ::= (ConstDeclarationMul) ConstDeclMul COMMA IDENT:constName EQUAL ConstVal 
+			   	 | 
+			   	 (ConstDeclarationMulEpsilon) /* Epsilon Production */; 
+			   	 
+/*============================================================================================================*/			   	 
+			   	 
+			   	 
+			   	 
+/* The following section introduces variables to MJ Compiler */
+
+VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
+				|
+				(VarDeclarationsError) VarDeclList error SEMI
+				{: parser.report_error("Invalid variable declaration", null); :} 
+				|
+				(VarDeclarationsEpsilon) /* Epsilon Production */;
+
+VarType ::= (VarTypeIdent) IDENT:typeName
+            |
+			(VarTypeInt) INT
+			|
+			(VarTypeChar) CHAR
+			|
+			(VarTypeBool) BOOL;
+			
+VarArrayDecl ::= (VarArrayDeclaration) SLBRACE SRBRACE
+				 |
+				 (VarArrayDeclarationEpsilon) /* Epsilon Production */;
+
+VarDecl ::= (VarDecl) VarType VarIdDeclList SEMI;
+
+VarIdDeclList ::= (SingleVarIdDecl) IDENT:varName VarArrayDecl
+				  |
+				  (MultiVarIdDecl) IDENT:varName VarArrayDecl COMMA VarIdDeclList
+				  |
+				  (ErrorVarIdDecl) error SEMI
+                  {: parser.report_error("Invalid variable declaration", null); :};
+
+
+/*============================================================================================================*/			   	 
+
+			   	 
+
+/* The following section introduces enum types. Enum can be used as type in expressions when defining constants or variables. */
+
+EnumDecl ::= (EnumDecl) EnumName LBRACE EnumItem EnumItemDeclList RBRACE;
+
+EnumName ::= (EnumName) ENUM IDENT:enumName;
+
+EnumItem ::= (EnumItem) IDENT:enumItemName EnumItemAssignValue;
+
+EnumItemAssignValue ::= (EnumValue) EQUAL NUMBER:numberLiteral
+						|
+						(EnumValueEpsilon) /* Epsilon production */;
+
+EnumItemDeclList ::= (EnumItemList) EnumItemDeclList COMMA EnumItem
+					 |
+					 (EnumItemListEpsilon) /* Epsilon production */
+					 |
+					 (EnumItemListError) error
+					 {: parser.report_error("Invalid enum declaration", null); :};
+
+
+/*============================================================================================================*/
+
+
+
+
+/* The following section introduces function parameters */
+
+ParamsDecl ::= (MethodParamsDecl) ParamsDecl COMMA VarType IDENT:paramName VarArrayDecl
+               |
+               (MethodParamDecl) VarType IDENT:paramName VarArrayDecl;
+			   
+OptionalParamsDecl ::= (OptionalParamsDeclarations) ParamsDecl
+					   |
+					   (OptionalParamsDeclEpsilon) /* Epsilon production */
+					   |
+					   (OptionalParamsDeclError) error
+					   {: parser.report_error("Invalid param declaration", null); :};
+			   
+/*============================================================================================================*/			   	 
+
+
+
+/* The following section introduces main function to MJ Compiler */
+
+MainFuncDecl ::= (MainFuncDecl) VoidMain MAIN LPAREN RPAREN VarDeclList LBRACE StatementDeclList RBRACE;
+
+VoidMain ::= (VoidMain) VOID;
+			
+/*============================================================================================================*/			   	 
+
+
+
+/*  The following section introduces custom function declaration to MJ Compiler */
+
+CustomFuncDeclList ::= (CustomFuncDeclarationsList) CustomFuncDeclList CustomFuncDecl
+					   |
+					   (CustomFuncDeclarationsListEpsilon) /* Epsilon production */
+					   |
+					   (CustomFuncDeclListError) error
+					   {: parser.report_error("Invalid custom function declaration", null); :};
+					   
+CustomFuncDecl ::= (CustomFuncDecl) FunctionType LPAREN OptionalParamsDecl RPAREN VarDeclList LBRACE StatementDeclList RBRACE;
+				 
+FunctionType ::= (FunctionNonVoidType) VarType IDENT:functionName
+				 |
+				 (FunctionVoidType) VOID IDENT:functionName;
+			
+/*============================================================================================================*/		
+
+
+
+/* The following section introduces statements to MJ Compiler */
+
+StatementDeclList ::= (StatementDeclarations) StatementDecl StatementDeclList
+					  |
+					  (StatementDeclarationsEpsilon) /* Epsilon Production */;
+					  
+StatementDecl ::= (StatementDeclLabel) GotoStmt StatementDecl 
+				  |
+				  (StatementDeclDesignator) DesignatorStatementDecl SEMI
+				  |
+				  (StatementDeclRead) READ LPAREN DesignatorDecl RPAREN SEMI
+				  |
+				  (StatementDeclPrint) PRINT LPAREN ExprDecl PrintArgsDecl RPAREN SEMI
+				  |
+				  (StatementDeclSwitch) Switch LPAREN ExprDecl RPAREN LBRACE SwitchOptionalStatementDeclList RBRACE
+				  |
+				  (StatementDeclReturn) RETURN ReturnOptExpr SEMI
+				  |
+				  (StatementDeclIf) IF LPAREN ConditionDecl Rparen CondStatementDecl ElseDecl
+				  |
+				  (StatementDeclFor) FOR Lparen SEMI ForConditionOpt SEMI ForDesignatorOpt Rparen ForStatementDecl
+				  |
+				  (StatementDeclBreak) BREAK SEMI
+				  |
+				  (StatementDeclContinue) CONTINUE SEMI
+				  |
+				  (StatementDeclGoto) GOTO IDENT:labelName SEMI
+				  |
+				  (StatementDeclError) error
+				  {: parser.report_error("Invalid statement declaration", null); :}; 
+				  
+GotoStmt ::= (GotoStmt) GOTO IDENT:labelName COLON;
+				  
+PrintArgsDecl ::= (PrintArgsDeclaration) COMMA NUMBER:numberLiteral
+				  |
+				  (PrintArgsDeclarationEpsilon) /* Epsilon Production */;
+				  
+Rparen ::= (Rparen) RPAREN;
+Lparen ::= (Lparen) LPAREN ForDesignatorOpt;
+Switch ::= (Switch) SWITCH;
+
+SwitchOptionalStatementDeclList ::= (SwitchOptionalStatementDeclarations) SwitchOptionalStatementDeclList Case OptionalStatementDeclList
+									|
+									(SwitchOptionalStatementDeclarationsEpsilon) /* Epsilon production */;
+
+Case ::= (Case) CASE NUMBER:numberLiteral ColonSwitch;
+ColonSwitch ::= COLON;
+
+OptionalStatementDeclList ::= (OptionalStatementDeclarations) OptionalStatementDeclList StatementDecl
+							  |
+							  (OptionalStatementDeclarationsEpsilon) /* Epsilon Production */;
+
+ReturnOptExpr ::= (ReturnOptExpression) ExprDecl
+				  |
+				  (ReturnOptExpressionEpsilon) /* Epsilon Production */;
+
+ElseDecl ::= (ElseDeclaration) ELSE CondStatementDecl
+			  |
+			 (ElseDeclarationEpsilon) /* Epsilon Production */;
+			 
+CondStatementDecl ::= (CondStatementDeclaration) StatementDecl
+					  |
+					  (CondStatementDeclarations) LBRACE StatementDeclList RBRACE;
+
+ForDesignatorOpt ::= (ForDesignator) DesignatorStatementDecl
+					 |
+					 (ForDesignatorEpsilon) /* Epsilon production */;
+					 
+ForConditionOpt ::= (ForCondition) ConditionDecl
+					|
+					(ForConditionEpsilon) /* Epsilon production */;
+					
+ForStatementDecl ::= (ForStatementDeclaration) StatementDecl
+					 |
+					 (ForStatementDeclarations) LBRACE StatementDeclList RBRACE;
+
+/*============================================================================================================*/			   	 
+
+
+/* The following section defines what can be designator in MJ Compiler and defines allowed designator statements */
+
+DesignatorStatementDecl ::= (DesignatorStatementDeclAssignment) DesignatorDecl EQUAL ExprDecl
+							|
+							(DesignatorStatementDeclIncrement) DesignatorDecl INC
+							|
+							(DesignatorStatementDeclDecrement) DesignatorDecl DEC
+							|
+							(DesignatorStatementDeclFunction) DesignatorDecl LPAREN ActParsDeclList RPAREN
+							|
+							(DesignatorStatementDeclDoubleIncrement) DesignatorDecl DOUBLE_INC;
+							
+DesignatorDecl ::= (DesignatorDeclIdent) IDENT:objectName
+				   |
+				   (DesignatorDeclIdentField) IDENT:typeName FULLSTOP IDENT:propertyName
+				   |
+				   (DesignatorDeclIdentLength) IDENT:objectName FULLSTOP LENGTH
+				   |
+				   (DesignatorDeclDot) IDENT:objectName DOT NUMBER:numberLiteral
+				   |
+				   (DesignatorDeclCaret) IDENT:objectName CARET NUMBER
+				   |
+				   (DesignatorDeclIdentArrayElemAccess) IDENT:objectName SLBRACE ExprDecl SRBRACE;
+				   
+/*============================================================================================================*/			   	 
+
+
+/* The following section defines expressions allowed in MJ language */
+ 		   
+ActParsDeclList ::= (ActParsDeclarations) ActParsDecl
+					|
+					(ActParsDeclarationsEpsilon) /* Epsilon Production */;
+			
+ActParsDecl ::= (ActParsDeclaration) ActParsDecl COMMA ExprDecl
+				|
+				(ActParsDeclarationOneParam) ExprDecl;
+
+AddopDecl ::= (AddopDeclPlus) PLUS
+		      |
+		      (AddopDeclMinus) MINUS;
+		      
+MulopDecl ::= (MulopDeclMul) MUL
+			  |
+			  (MulopDeclDiv) DIV
+			  |
+			  (MulopDeclMod) MOD;
+			  
+FactorDecl ::= (FactorDeclNumber) NUMBER:numberLiteral
+			   |
+			   (FactorDeclChar) CHARCONST:charLiteral
+			   |
+			   (FactorDeclParenExpr) LPAREN ExprDecl RPAREN
+			   |
+			   (FactorDeclBool) BOOLCONST:boolLiteral
+			   |
+			   (FactorDeclDesignator) DesignatorDecl
+			   |
+			   (FactorDeclAllocationExpr) NEW VarType SLBRACE ExprDecl SRBRACE
+			   |
+			   (FactorDeclFunctionCall) DesignatorDecl LPAREN ActParsDeclList RPAREN;
+			   
+TermDecl ::= (TermDecl) FactorDecl MulopFactorDeclList;
+
+MulopFactorDeclList ::= (MulopFactorDeclarations) MulopFactorDeclList MulopDecl FactorDecl 
+					    |
+					    (MulopFactorDeclarationsEpsilon) /* Epsilon Production */;
+					    
+AddopTermDeclList ::= (AddopTermDeclarations) AddopTermDeclList AddopDecl TermDecl
+		  			  |
+		  			  (AddopTermDeclarationsEpsilon) /* Epsilon Production */;
+		  		    
+ExprDecl ::= (ExprDeclarationTernaryOp) ConditionDecl Question ExprDecl Colon ExprDecl
+			 |
+			 (ExprDeclaration) ExprOptSignDecl TermDecl AddopTermDeclList;
+			 
+			 
+Question ::= (Question) QUESTION;
+Colon ::= (Colon) COLON;
+			 
+ExprOptSignDecl ::= (ExprOptSignDeclMinus) MINUS
+					|
+					(ExprOptSignDeclEpsilon) /* Epsilon Production */;
+             
+ConditionDecl ::= (ConditionDecl) CondTermDecl ConditionOrPartDecl;
+
+ConditionOrPartDecl ::= (ConditionOrPartDeclaration) ConditionOrPartDecl Or CondTermDecl 
+						|
+						(ConditionOrPartDeclarationEpsilon) /* Epsilon production */;
+						
+Or ::= (Or) OR;
+And ::= (And) AND;
+						
+CondTermDecl ::= (CondTermDecl) CondFactDecl CondTermAndPartDecl;
+
+CondTermAndPartDecl ::= (CondTermAndPartDeclaration) CondTermAndPartDecl And CondFactDecl 
+						|
+						(CondTermAndPartDeclarationEpsilon) /* Epsilon Production */;
+
+CondFactDecl ::= (CondFactDecl) ExprOptSignDecl TermDecl AddopTermDeclList CondFactOptArgDecl;
+
+CondFactOptArgDecl ::= (CondFactOptArgDeclaration) RelopDecl ExprOptSignDecl TermDecl AddopTermDeclList
+					   |
+					   (CondFactOptArgDeclarationEpsilon) /* Epsilon Production */;
+						
+RelopDecl ::= (RelopDeclEQ) EQ 
+			  | 
+			  (RelopDeclNE) NE 
+			  | 
+			  (RelopDeclGT) GT 
+			  | 
+			  (RelopDeclGE) GE 
+			  | 
+			  (RelopDeclLT) LT 
+			  | 
+			  (RelopDeclLE) LE;
+/*============================================================================================================*/             

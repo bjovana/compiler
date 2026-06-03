@@ -1,0 +1,14 @@
+package rs.ac.bg.etf.pp1.utils;
+
+import rs.ac.bg.etf.pp1.ast.*;
+
+public class CodeGeneratorUtils {
+
+	public static void enterMethod(SyntaxNode syntaxNode) {
+		
+	}
+	
+	private CodeGeneratorUtils() {
+		// Private constructor for preventing utils class instantiation
+	}
+}
