@@ -1,6 +1,6 @@
 # Compiler Construction
 
-This project was developed as part of the Compiler Construction course.
+This project was developed as part of the Compiler course.
 
 The objective of the project was to implement the main phases of a compiler, from source code analysis to code generation.
 
