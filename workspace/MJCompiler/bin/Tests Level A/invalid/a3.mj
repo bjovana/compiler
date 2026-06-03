@@ -1,9 +1,0 @@
-program A2
-
-{
-    void main()
-    int a;
-    {
-        a = x + '2' + true;
-    }
-}
